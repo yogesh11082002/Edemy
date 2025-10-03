@@ -97,7 +97,17 @@ export default function CourseDetailPage() {
                           <span>{lesson.title}</span>
                         </div>
                       </AccordionTrigger>
-                      <AccordionContent className="pl-10">
+                      <AccordionContent className="pl-10 space-y-4">
+                        <div className="aspect-video">
+                          <iframe
+                            width="100%"
+                            height="100%"
+                            src={lesson.videoUrl}
+                            title={lesson.title}
+                            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                            allowFullScreen
+                          ></iframe>
+                        </div>
                         <div className="flex items-center justify-between">
                             <p>Video Content</p>
                             <p className="text-sm text-muted-foreground">{lesson.duration}</p>

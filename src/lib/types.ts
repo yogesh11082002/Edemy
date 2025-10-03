@@ -13,7 +13,7 @@ export type Course = {
   imageHint: string;
   language: string;
   duration: string;
-  lessons: { title: string; duration: string }[];
+  lessons: { title: string; duration: string, videoUrl: string }[];
   enrolledStudents?: number;
 };
 

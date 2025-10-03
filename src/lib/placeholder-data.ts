@@ -59,9 +59,9 @@ export const courses: Course[] = [
     duration: '62 hours',
     enrolledStudents: 2500,
     lessons: [
-      { title: 'Introduction to HTML', duration: '30m' },
-      { title: 'Advanced CSS and Sass', duration: '1h 15m' },
-      { title: 'JavaScript for Beginners', duration: '2h' }
+      { title: 'Introduction to HTML', duration: '30m', videoUrl: 'https://www.youtube.com/embed/kUMe1FH4CHE' },
+      { title: 'Advanced CSS and Sass', duration: '1h 15m', videoUrl: 'https://www.youtube.com/embed/kUMe1FH4CHE' },
+      { title: 'JavaScript for Beginners', duration: '2h', videoUrl: 'https://www.youtube.com/embed/kUMe1FH4CHE' }
     ]
   },
   {
@@ -80,9 +80,9 @@ export const courses: Course[] = [
     language: 'English',
     duration: '35.5 hours',
     lessons: [
-      { title: 'The Design Thinking Process', duration: '45m' },
-      { title: 'Wireframing in Figma', duration: '1h 30m' },
-      { title: 'Creating High-Fidelity Prototypes', duration: '2h 15m' }
+      { title: 'The Design Thinking Process', duration: '45m', videoUrl: 'https://www.youtube.com/embed/c9Wg6Cb_YlU' },
+      { title: 'Wireframing in Figma', duration: '1h 30m', videoUrl: 'https://www.youtube.com/embed/c9Wg6Cb_YlU' },
+      { title: 'Creating High-Fidelity Prototypes', duration: '2h 15m', videoUrl: 'https://www.youtube.com/embed/c9Wg6Cb_YlU' }
     ]
   },
   {
@@ -101,9 +101,9 @@ export const courses: Course[] = [
     language: 'English',
     duration: '40.5 hours',
     lessons: [
-        { title: 'SEO Fundamentals', duration: '1h' },
-        { title: 'Social Media Strategy', duration: '1h 45m' },
-        { title: 'Content Marketing', duration: '2h' }
+        { title: 'SEO Fundamentals', duration: '1h', videoUrl: 'https://www.youtube.com/embed/0QpTO2eC7dM' },
+        { title: 'Social Media Strategy', duration: '1h 45m', videoUrl: 'https://www.youtube.com/embed/0QpTO2eC7dM' },
+        { title: 'Content Marketing', duration: '2h', videoUrl: 'https://www.youtube.com/embed/0QpTO2eC7dM' }
     ]
   },
   {
@@ -122,9 +122,9 @@ export const courses: Course[] = [
     language: 'English',
     duration: '10 hours',
     lessons: [
-        { title: 'Introduction to Mindfulness', duration: '20m' },
-        { title: 'Guided Body Scan Meditation', duration: '30m' },
-        { title: 'Mindful Breathing Techniques', duration: '25m' }
+        { title: 'Introduction to Mindfulness', duration: '20m', videoUrl: 'https://www.youtube.com/embed/o-kMJBWk9E0' },
+        { title: 'Guided Body Scan Meditation', duration: '30m', videoUrl: 'https://www.youtube.com/embed/o-kMJBWk9E0' },
+        { title: 'Mindful Breathing Techniques', duration: '25m', videoUrl: 'https://www.youtube.com/embed/o-kMJBWk9E0' }
     ]
   },
   {
@@ -143,9 +143,9 @@ export const courses: Course[] = [
     language: 'English',
     duration: '22 hours',
     lessons: [
-        { title: 'Understanding Your Camera', duration: '1h' },
-        { title: 'Composition Rules', duration: '1h 30m' },
-        { title: 'Introduction to Lightroom', duration: '2h' }
+        { title: 'Understanding Your Camera', duration: '1h', videoUrl: 'https://www.youtube.com/embed/L14_n629x2c' },
+        { title: 'Composition Rules', duration: '1h 30m', videoUrl: 'https://www.youtube.com/embed/L14_n629x2c' },
+        { title: 'Introduction to Lightroom', duration: '2h', videoUrl: 'https://www.youtube.com/embed/L14_n629x2c' }
     ]
   },
   {
@@ -164,9 +164,9 @@ export const courses: Course[] = [
     language: 'English',
     duration: '30 hours',
     lessons: [
-        { title: 'Your First Chords', duration: '45m' },
-        { title: 'Strumming Patterns', duration: '1h' },
-        { title: 'Playing Your First Song', duration: '1h 15m' }
+        { title: 'Your First Chords', duration: '45m', videoUrl: 'https://www.youtube.com/embed/fJef_iI4-yE' },
+        { title: 'Strumming Patterns', duration: '1h', videoUrl: 'https://www.youtube.com/embed/fJef_iI4-yE' },
+        { title: 'Playing Your First Song', duration: '1h 15m', videoUrl: 'https://www.youtube.com/embed/fJef_iI4-yE' }
     ]
   },
   {
@@ -185,9 +185,9 @@ export const courses: Course[] = [
     language: 'English',
     duration: '50 hours',
     lessons: [
-        { title: 'Intro to RL Concepts', duration: '1h 30m' },
-        { title: 'Q-Learning and Deep Q-Networks', duration: '3h' },
-        { title: 'Policy Gradients', duration: '3h' }
+        { title: 'Intro to RL Concepts', duration: '1h 30m', videoUrl: 'https://www.youtube.com/embed/JgvyzIkgxF0' },
+        { title: 'Q-Learning and Deep Q-Networks', duration: '3h', videoUrl: 'https://www.youtube.com/embed/JgvyzIkgxF0' },
+        { title: 'Policy Gradients', duration: '3h', videoUrl: 'https://www.youtube.com/embed/JgvyzIkgxF0' }
     ]
   },
   {
@@ -206,9 +206,9 @@ export const courses: Course[] = [
     language: 'English',
     duration: '15 hours',
     lessons: [
-        { title: 'Mastering Knife Skills', duration: '1h' },
-        { title: 'The Art of Sauce Making', duration: '2h' },
-        { title: 'Plating and Presentation', duration: '1h 30m' }
+        { title: 'Mastering Knife Skills', duration: '1h', videoUrl: 'https://www.youtube.com/embed/G-azE5m2-qM' },
+        { title: 'The Art of Sauce Making', duration: '2h', videoUrl: 'https://www.youtube.com/embed/G-azE5m2-qM' },
+        { title: 'Plating and Presentation', duration: '1h 30m', videoUrl: 'https://www.youtube.com/embed/G-azE5m2-qM' }
     ]
   },
   {
@@ -227,9 +227,9 @@ export const courses: Course[] = [
     language: 'English',
     duration: '12 hours',
     lessons: [
-        { title: 'Understanding Color Theory', duration: '1h' },
-        { title: 'Brush Techniques', duration: '1h 30m' },
-        { title: 'Your First Landscape', duration: '2h' }
+        { title: 'Understanding Color Theory', duration: '1h', videoUrl: 'https://www.youtube.com/embed/wI-nMAH22P4' },
+        { title: 'Brush Techniques', duration: '1h 30m', videoUrl: 'https://www.youtube.com/embed/wI-nMAH22P4' },
+        { title: 'Your First Landscape', duration: '2h', videoUrl: 'https://www.youtube.com/embed/wI-nMAH22P4' }
     ]
   },
   {
@@ -248,9 +248,9 @@ export const courses: Course[] = [
     language: 'English',
     duration: '25 hours',
     lessons: [
-        { title: 'The Elements of Plot', duration: '1h' },
-        { title: 'Creating Memorable Characters', duration: '1h 45m' },
-        { title: 'Dialogue and Pacing', duration: '2h' }
+        { title: 'The Elements of Plot', duration: '1h', videoUrl: 'https://www.youtube.com/embed/f4-s7g4sA28' },
+        { title: 'Creating Memorable Characters', duration: '1h 45m', videoUrl: 'https://www.youtube.com/embed/f4-s7g4sA28' },
+        { title: 'Dialogue and Pacing', duration: '2h', videoUrl: 'https://www.youtube.com/embed/f4-s7g4sA28' }
     ]
   },
   {
@@ -269,9 +269,9 @@ export const courses: Course[] = [
     language: 'English',
     duration: '20 hours',
     lessons: [
-        { title: 'Foundation Poses', duration: '1h' },
-        { title: 'Vinyasa Flow Sequences', duration: '1h 30m' },
-        { title: 'Restorative Yoga', duration: '1h' }
+        { title: 'Foundation Poses', duration: '1h', videoUrl: 'https://www.youtube.com/embed/hJ83bZqj3-w' },
+        { title: 'Vinyasa Flow Sequences', duration: '1h 30m', videoUrl: 'https://www.youtube.com/embed/hJ83bZqj3-w' },
+        { title: 'Restorative Yoga', duration: '1h', videoUrl: 'https://www.youtube.com/embed/hJ83bZqj3-w' }
     ]
   },
   {
@@ -290,9 +290,9 @@ export const courses: Course[] = [
     language: 'English',
     duration: '18 hours',
     lessons: [
-        { title: 'What is the Stock Market?', duration: '1h' },
-        { title: 'Analyzing a Company', duration: '2h' },
-        { title: 'Building Your First Portfolio', duration: '2h' }
+        { title: 'What is the Stock Market?', duration: '1h', videoUrl: 'https://www.youtube.com/embed/ZCFkWDdmXG8' },
+        { title: 'Analyzing a Company', duration: '2h', videoUrl: 'https://www.youtube.com/embed/ZCFkWDdmXG8' },
+        { title: 'Building Your First Portfolio', duration: '2h', videoUrl: 'https://www.youtube.com/embed/ZCFkWDdmXG8' }
     ]
   }
 ];

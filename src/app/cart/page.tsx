@@ -2,18 +2,54 @@
 
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle, CardFooter } from "@/components/ui/card";
-import { courses } from "@/lib/placeholder-data";
-import { Trash2, X } from "lucide-react";
+import { useToast } from "@/hooks/use-toast";
+import { courses as allCourses } from "@/lib/placeholder-data";
+import { Course } from "@/lib/types";
+import { Trash2 } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
 export default function CartPage() {
-  const [cartItems, setCartItems] = useState(courses.slice(0, 2));
+  const [cartItems, setCartItems] = useState<Course[]>([]);
+  const { toast } = useToast();
+
+  useEffect(() => {
+    // On component mount, check if there are items in localStorage
+    const storedCart = localStorage.getItem("edemy-cart");
+    if (storedCart) {
+      const itemIds = JSON.parse(storedCart) as string[];
+      const items = allCourses.filter(course => itemIds.includes(course.id));
+      setCartItems(items);
+    } else {
+        // For demonstration, start with a course in the cart if it's empty
+        const initialItem = allCourses.find(c => c.id === '1');
+        if (initialItem) {
+            setCartItems([initialItem]);
+            localStorage.setItem("edemy-cart", JSON.stringify([initialItem.id]));
+        }
+    }
+  }, []);
 
   const handleRemove = (id: string) => {
-    setCartItems(prev => prev.filter(item => item.id !== id));
+    const newCartItems = cartItems.filter(item => item.id !== id);
+    setCartItems(newCartItems);
+    const itemIds = newCartItems.map(item => item.id);
+    localStorage.setItem("edemy-cart", JSON.stringify(itemIds));
+    toast({
+        title: "Item removed",
+        description: "The course has been removed from your cart."
+    })
   };
+
+  const handleCheckout = () => {
+    toast({
+        title: "Checkout Successful!",
+        description: "Thank you for your purchase. Your courses are now available in your dashboard."
+    });
+    setCartItems([]);
+    localStorage.removeItem("edemy-cart");
+  }
 
   const subtotal = cartItems.reduce((acc, item) => acc + item.price, 0);
 
@@ -27,7 +63,7 @@ export default function CartPage() {
       {cartItems.length > 0 ? (
         <div className="grid md:grid-cols-3 gap-12">
           <div className="md:col-span-2">
-            <h2 className="text-2xl font-semibold mb-6">{cartItems.length} Courses in Cart</h2>
+            <h2 className="text-2xl font-semibold mb-6">{cartItems.length} Course{cartItems.length > 1 ? 's' : ''} in Cart</h2>
             <div className="space-y-6">
               {cartItems.map(course => (
                 <Card key={course.id} className="flex items-start gap-4 p-4">
@@ -70,11 +106,11 @@ export default function CartPage() {
                   <span className="font-bold text-xl">${subtotal.toFixed(2)}</span>
                 </div>
                 <p className="text-sm text-muted-foreground">
-                  Taxes and shipping calculated at checkout.
+                  Taxes calculated at checkout.
                 </p>
               </CardContent>
               <CardFooter>
-                <Button size="lg" className="w-full bg-gradient-primary-accent text-primary-foreground">
+                <Button size="lg" className="w-full bg-gradient-primary-accent text-primary-foreground" onClick={handleCheckout}>
                   Checkout
                 </Button>
               </CardFooter>

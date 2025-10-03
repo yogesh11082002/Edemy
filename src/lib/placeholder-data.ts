@@ -2,7 +2,12 @@ import type { Course, Instructor, Review, Student, Testimonial } from './types';
 import { PlaceHolderImages } from './placeholder-images';
 
 const getImage = (id: string) => {
-    return PlaceHolderImages.find(img => img.id === id) || { imageUrl: '', imageHint: 'placeholder' };
+    const image = PlaceHolderImages.find(img => img.id === id);
+    if (image) {
+        return { imageUrl: image.imageUrl, imageHint: image.imageHint };
+    }
+    // Fallback to a generic placeholder if ID is not found
+    return { imageUrl: 'https://picsum.photos/seed/placeholder/600/400', imageHint: 'placeholder' };
 }
 
 export const instructors: Instructor[] = [
@@ -59,9 +64,9 @@ export const courses: Course[] = [
     duration: '62 hours',
     enrolledStudents: 2500,
     lessons: [
-      { title: 'Introduction to HTML', duration: '30m', videoUrl: 'https://www.youtube.com/embed/kUMe1FH4CHE' },
-      { title: 'Advanced CSS and Sass', duration: '1h 15m', videoUrl: 'https://www.youtube.com/embed/kUMe1FH4CHE' },
-      { title: 'JavaScript for Beginners', duration: '2h', videoUrl: 'https://www.youtube.com/embed/kUMe1FH4CHE' }
+      { title: 'Introduction to HTML', duration: '30m', videoUrl: 'https://www.youtube.com/embed/kUMe1FH4CHE?autoplay=1' },
+      { title: 'Advanced CSS and Sass', duration: '1h 15m', videoUrl: 'https://www.youtube.com/embed/kUMe1FH4CHE?autoplay=1' },
+      { title: 'JavaScript for Beginners', duration: '2h', videoUrl: 'https://www.youtube.com/embed/kUMe1FH4CHE?autoplay=1' }
     ]
   },
   {
@@ -79,10 +84,11 @@ export const courses: Course[] = [
     imageHint: getImage('course-2').imageHint,
     language: 'English',
     duration: '35.5 hours',
+     enrolledStudents: 4800,
     lessons: [
-      { title: 'The Design Thinking Process', duration: '45m', videoUrl: 'https://www.youtube.com/embed/c9Wg6Cb_YlU' },
-      { title: 'Wireframing in Figma', duration: '1h 30m', videoUrl: 'https://www.youtube.com/embed/c9Wg6Cb_YlU' },
-      { title: 'Creating High-Fidelity Prototypes', duration: '2h 15m', videoUrl: 'https://www.youtube.com/embed/c9Wg6Cb_YlU' }
+      { title: 'The Design Thinking Process', duration: '45m', videoUrl: 'https://www.youtube.com/embed/c9Wg6Cb_YlU?autoplay=1' },
+      { title: 'Wireframing in Figma', duration: '1h 30m', videoUrl: 'https://www.youtube.com/embed/c9Wg6Cb_YlU?autoplay=1' },
+      { title: 'Creating High-Fidelity Prototypes', duration: '2h 15m', videoUrl: 'https://www.youtube.com/embed/c9Wg6Cb_YlU?autoplay=1' }
     ]
   },
   {
@@ -100,10 +106,11 @@ export const courses: Course[] = [
     imageHint: getImage('course-3').imageHint,
     language: 'English',
     duration: '40.5 hours',
+     enrolledStudents: 1200,
     lessons: [
-        { title: 'SEO Fundamentals', duration: '1h', videoUrl: 'https://www.youtube.com/embed/0QpTO2eC7dM' },
-        { title: 'Social Media Strategy', duration: '1h 45m', videoUrl: 'https://www.youtube.com/embed/0QpTO2eC7dM' },
-        { title: 'Content Marketing', duration: '2h', videoUrl: 'https://www.youtube.com/embed/0QpTO2eC7dM' }
+        { title: 'SEO Fundamentals', duration: '1h', videoUrl: 'https://www.youtube.com/embed/0QpTO2eC7dM?autoplay=1' },
+        { title: 'Social Media Strategy', duration: '1h 45m', videoUrl: 'https://www.youtube.com/embed/0QpTO2eC7dM?autoplay=1' },
+        { title: 'Content Marketing', duration: '2h', videoUrl: 'https://www.youtube.com/embed/0QpTO2eC7dM?autoplay=1' }
     ]
   },
   {
@@ -121,10 +128,11 @@ export const courses: Course[] = [
     imageHint: getImage('course-4').imageHint,
     language: 'English',
     duration: '10 hours',
+     enrolledStudents: 3100,
     lessons: [
-        { title: 'Introduction to Mindfulness', duration: '20m', videoUrl: 'https://www.youtube.com/embed/o-kMJBWk9E0' },
-        { title: 'Guided Body Scan Meditation', duration: '30m', videoUrl: 'https://www.youtube.com/embed/o-kMJBWk9E0' },
-        { title: 'Mindful Breathing Techniques', duration: '25m', videoUrl: 'https://www.youtube.com/embed/o-kMJBWk9E0' }
+        { title: 'Introduction to Mindfulness', duration: '20m', videoUrl: 'https://www.youtube.com/embed/o-kMJBWk9E0?autoplay=1' },
+        { title: 'Guided Body Scan Meditation', duration: '30m', videoUrl: 'https://www.youtube.com/embed/o-kMJBWk9E0?autoplay=1' },
+        { title: 'Mindful Breathing Techniques', duration: '25m', videoUrl: 'https://www.youtube.com/embed/o-kMJBWk9E0?autoplay=1' }
     ]
   },
   {
@@ -142,10 +150,11 @@ export const courses: Course[] = [
     imageHint: getImage('course-5').imageHint,
     language: 'English',
     duration: '22 hours',
+     enrolledStudents: 5500,
     lessons: [
-        { title: 'Understanding Your Camera', duration: '1h', videoUrl: 'https://www.youtube.com/embed/L14_n629x2c' },
-        { title: 'Composition Rules', duration: '1h 30m', videoUrl: 'https://www.youtube.com/embed/L14_n629x2c' },
-        { title: 'Introduction to Lightroom', duration: '2h', videoUrl: 'https://www.youtube.com/embed/L14_n629x2c' }
+        { title: 'Understanding Your Camera', duration: '1h', videoUrl: 'https://www.youtube.com/embed/L14_n629x2c?autoplay=1' },
+        { title: 'Composition Rules', duration: '1h 30m', videoUrl: 'https://www.youtube.com/embed/L14_n629x2c?autoplay=1' },
+        { title: 'Introduction to Lightroom', duration: '2h', videoUrl: 'https://www.youtube.com/embed/L14_n629x2c?autoplay=1' }
     ]
   },
   {
@@ -163,10 +172,11 @@ export const courses: Course[] = [
     imageHint: getImage('course-6').imageHint,
     language: 'English',
     duration: '30 hours',
+     enrolledStudents: 4200,
     lessons: [
-        { title: 'Your First Chords', duration: '45m', videoUrl: 'https://www.youtube.com/embed/fJef_iI4-yE' },
-        { title: 'Strumming Patterns', duration: '1h', videoUrl: 'https://www.youtube.com/embed/fJef_iI4-yE' },
-        { title: 'Playing Your First Song', duration: '1h 15m', videoUrl: 'https://www.youtube.com/embed/fJef_iI4-yE' }
+        { title: 'Your First Chords', duration: '45m', videoUrl: 'https://www.youtube.com/embed/fJef_iI4-yE?autoplay=1' },
+        { title: 'Strumming Patterns', duration: '1h', videoUrl: 'https://www.youtube.com/embed/fJef_iI4-yE?autoplay=1' },
+        { title: 'Playing Your First Song', duration: '1h 15m', videoUrl: 'https://www.youtube.com/embed/fJef_iI4-yE?autoplay=1' }
     ]
   },
   {
@@ -184,10 +194,11 @@ export const courses: Course[] = [
     imageHint: getImage('course-7').imageHint,
     language: 'English',
     duration: '50 hours',
+     enrolledStudents: 1500,
     lessons: [
-        { title: 'Intro to RL Concepts', duration: '1h 30m', videoUrl: 'https://www.youtube.com/embed/JgvyzIkgxF0' },
-        { title: 'Q-Learning and Deep Q-Networks', duration: '3h', videoUrl: 'https://www.youtube.com/embed/JgvyzIkgxF0' },
-        { title: 'Policy Gradients', duration: '3h', videoUrl: 'https://www.youtube.com/embed/JgvyzIkgxF0' }
+        { title: 'Intro to RL Concepts', duration: '1h 30m', videoUrl: 'https://www.youtube.com/embed/JgvyzIkgxF0?autoplay=1' },
+        { title: 'Q-Learning and Deep Q-Networks', duration: '3h', videoUrl: 'https://www.youtube.com/embed/JgvyzIkgxF0?autoplay=1' },
+        { title: 'Policy Gradients', duration: '3h', videoUrl: 'https://www.youtube.com/embed/JgvyzIkgxF0?autoplay=1' }
     ]
   },
   {
@@ -205,10 +216,11 @@ export const courses: Course[] = [
     imageHint: getImage('course-8').imageHint,
     language: 'English',
     duration: '15 hours',
+     enrolledStudents: 2800,
     lessons: [
-        { title: 'Mastering Knife Skills', duration: '1h', videoUrl: 'https://www.youtube.com/embed/G-azE5m2-qM' },
-        { title: 'The Art of Sauce Making', duration: '2h', videoUrl: 'https://www.youtube.com/embed/G-azE5m2-qM' },
-        { title: 'Plating and Presentation', duration: '1h 30m', videoUrl: 'https://www.youtube.com/embed/G-azE5m2-qM' }
+        { title: 'Mastering Knife Skills', duration: '1h', videoUrl: 'https://www.youtube.com/embed/G-azE5m2-qM?autoplay=1' },
+        { title: 'The Art of Sauce Making', duration: '2h', videoUrl: 'https://www.youtube.com/embed/G-azE5m2-qM?autoplay=1' },
+        { title: 'Plating and Presentation', duration: '1h 30m', videoUrl: 'https://www.youtube.com/embed/G-azE5m2-qM?autoplay=1' }
     ]
   },
   {
@@ -226,10 +238,11 @@ export const courses: Course[] = [
     imageHint: getImage('course-9').imageHint,
     language: 'English',
     duration: '12 hours',
+     enrolledStudents: 1900,
     lessons: [
-        { title: 'Understanding Color Theory', duration: '1h', videoUrl: 'https://www.youtube.com/embed/wI-nMAH22P4' },
-        { title: 'Brush Techniques', duration: '1h 30m', videoUrl: 'https://www.youtube.com/embed/wI-nMAH22P4' },
-        { title: 'Your First Landscape', duration: '2h', videoUrl: 'https://www.youtube.com/embed/wI-nMAH22P4' }
+        { title: 'Understanding Color Theory', duration: '1h', videoUrl: 'https://www.youtube.com/embed/wI-nMAH22P4?autoplay=1' },
+        { title: 'Brush Techniques', duration: '1h 30m', videoUrl: 'https://www.youtube.com/embed/wI-nMAH22P4?autoplay=1' },
+        { title: 'Your First Landscape', duration: '2h', videoUrl: 'https://www.youtube.com/embed/wI-nMAH22P4?autoplay=1' }
     ]
   },
   {
@@ -247,10 +260,11 @@ export const courses: Course[] = [
     imageHint: getImage('course-10').imageHint,
     language: 'English',
     duration: '25 hours',
+     enrolledStudents: 2200,
     lessons: [
-        { title: 'The Elements of Plot', duration: '1h', videoUrl: 'https://www.youtube.com/embed/f4-s7g4sA28' },
-        { title: 'Creating Memorable Characters', duration: '1h 45m', videoUrl: 'https://www.youtube.com/embed/f4-s7g4sA28' },
-        { title: 'Dialogue and Pacing', duration: '2h', videoUrl: 'https://www.youtube.com/embed/f4-s7g4sA28' }
+        { title: 'The Elements of Plot', duration: '1h', videoUrl: 'https://www.youtube.com/embed/f4-s7g4sA28?autoplay=1' },
+        { title: 'Creating Memorable Characters', duration: '1h 45m', videoUrl: 'https://www.youtube.com/embed/f4-s7g4sA28?autoplay=1' },
+        { title: 'Dialogue and Pacing', duration: '2h', videoUrl: 'https://www.youtube.com/embed/f4-s7g4sA28?autoplay=1' }
     ]
   },
   {
@@ -268,10 +282,11 @@ export const courses: Course[] = [
     imageHint: getImage('course-11').imageHint,
     language: 'English',
     duration: '20 hours',
+     enrolledStudents: 6000,
     lessons: [
-        { title: 'Foundation Poses', duration: '1h', videoUrl: 'https://www.youtube.com/embed/hJ83bZqj3-w' },
-        { title: 'Vinyasa Flow Sequences', duration: '1h 30m', videoUrl: 'https://www.youtube.com/embed/hJ83bZqj3-w' },
-        { title: 'Restorative Yoga', duration: '1h', videoUrl: 'https://www.youtube.com/embed/hJ83bZqj3-w' }
+        { title: 'Foundation Poses', duration: '1h', videoUrl: 'https://www.youtube.com/embed/hJ83bZqj3-w?autoplay=1' },
+        { title: 'Vinyasa Flow Sequences', duration: '1h 30m', videoUrl: 'https://www.youtube.com/embed/hJ83bZqj3-w?autoplay=1' },
+        { title: 'Restorative Yoga', duration: '1h', videoUrl: 'https://www.youtube.com/embed/hJ83bZqj3-w?autoplay=1' }
     ]
   },
   {
@@ -289,10 +304,11 @@ export const courses: Course[] = [
     imageHint: getImage('course-12').imageHint,
     language: 'English',
     duration: '18 hours',
+     enrolledStudents: 3500,
     lessons: [
-        { title: 'What is the Stock Market?', duration: '1h', videoUrl: 'https://www.youtube.com/embed/ZCFkWDdmXG8' },
-        { title: 'Analyzing a Company', duration: '2h', videoUrl: 'https://www.youtube.com/embed/ZCFkWDdmXG8' },
-        { title: 'Building Your First Portfolio', duration: '2h', videoUrl: 'https://www.youtube.com/embed/ZCFkWDdmXG8' }
+        { title: 'What is the Stock Market?', duration: '1h', videoUrl: 'https://www.youtube.com/embed/ZCFkWDdmXG8?autoplay=1' },
+        { title: 'Analyzing a Company', duration: '2h', videoUrl: 'https://www.youtube.com/embed/ZCFkWDdmXG8?autoplay=1' },
+        { title: 'Building Your First Portfolio', duration: '2h', videoUrl: 'https://www.youtube.com/embed/ZCFkWDdmXG8?autoplay=1' }
     ]
   }
 ];

@@ -13,6 +13,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { useToast } from "@/hooks/use-toast";
 import {
   CheckCircle,
   Clock,
@@ -26,16 +27,56 @@ import {
   X,
 } from "lucide-react";
 import Link from "next/link";
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { useRouter } from "next/navigation";
+import type { Course } from "@/lib/types";
 
 export default function CourseDetailPage() {
   const params = useParams<{ courseId: string }>();
+  const router = useRouter();
+  const { toast } = useToast();
   const [showVideo, setShowVideo] = useState(false);
-  const course = courses.find((c) => c.id === params.courseId);
+  const [course, setCourse] = useState<Course | undefined>(undefined);
+
+  useEffect(() => {
+    const foundCourse = courses.find((c) => c.id === params.courseId);
+    setCourse(foundCourse);
+  }, [params.courseId]);
 
   if (!course) {
+    // Show a loading state or return null until the course is found
+    // Or you can handle notFound() inside useEffect if the course is definitively not there
+    // For now, we'll return a loading indicator.
+     return <div className="container mx-auto px-4 md:px-6 py-12 text-center">Loading...</div>;
+  }
+
+  if (course === undefined) {
     notFound();
   }
+
+  const handleAddToCart = () => {
+    const storedCart = localStorage.getItem("edemy-cart");
+    let cartIds = storedCart ? JSON.parse(storedCart) : [];
+    if (!cartIds.includes(course.id)) {
+      cartIds.push(course.id);
+      localStorage.setItem("edemy-cart", JSON.stringify(cartIds));
+      toast({
+        title: "Added to cart!",
+        description: `"${course.title}" has been added to your cart.`,
+      });
+    } else {
+       toast({
+        variant: "default",
+        title: "Already in cart",
+        description: `"${course.title}" is already in your cart.`,
+      });
+    }
+  };
+
+  const handleEnrollNow = () => {
+    handleAddToCart();
+    router.push("/cart");
+  };
 
   const courseReviews = reviews.slice(0, 2);
 
@@ -192,11 +233,11 @@ export default function CourseDetailPage() {
               <CardContent className="p-6 space-y-4">
                 <span className="text-3xl font-bold text-primary">${course.price}</span>
                 <div className="flex gap-2">
-                    <Button asChild size="lg" className="w-full bg-gradient-primary-accent text-primary-foreground">
-                      <Link href="/cart">Enroll Now</Link>
+                    <Button size="lg" className="w-full bg-gradient-primary-accent text-primary-foreground" onClick={handleEnrollNow}>
+                      Enroll Now
                     </Button>
-                    <Button asChild size="lg" variant="outline" className="w-full">
-                      <Link href="/cart">Add to Cart</Link>
+                    <Button size="lg" variant="outline" className="w-full" onClick={handleAddToCart}>
+                      Add to Cart
                     </Button>
                 </div>
                 <div className="space-y-3 text-sm pt-4">
@@ -218,12 +259,12 @@ export default function CourseDetailPage() {
                      <X className="h-8 w-8" />
                  </button>
                 <div className="aspect-video bg-black">
-                     <iframe 
-                        width="100%" 
-                        height="100%" 
-                        src="https://www.youtube.com/embed/dQw4w9WgXcQ?autoplay=1" 
-                        title="YouTube video player" 
-                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
+                     <iframe
+                        width="100%"
+                        height="100%"
+                        src={course.lessons[0].videoUrl}
+                        title="YouTube video player"
+                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
                         allowFullScreen
                     ></iframe>
                 </div>

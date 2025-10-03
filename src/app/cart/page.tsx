@@ -16,33 +16,21 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { useState, useEffect } from 'react';
 
-// This function now runs outside the component, so it doesn't rely on component state/props.
-const getCartItemsFromStorage = (): Course[] => {
-  if (typeof window === 'undefined') {
-    return [];
-  }
-  const storedCart = localStorage.getItem('edemy-cart');
-  if (storedCart) {
-    const itemIds = JSON.parse(storedCart) as string[];
-    return allCourses.filter((course) => itemIds.includes(course.id));
-  }
-  return [];
-};
-
 export default function CartPage() {
-  const [cartItems, setCartItems] = useState<Course[]>(getCartItemsFromStorage);
+  const [cartItems, setCartItems] = useState<Course[]>([]);
+  const [isClient, setIsClient] = useState(false);
   const { toast } = useToast();
 
   useEffect(() => {
-    // This effect now only runs if you want to handle external changes to localStorage,
-    // but the initial state is already set. For this app's logic, it might not be needed,
-    // but it's good practice if the cart could be updated from another tab.
-    const handleStorageChange = () => {
-      setCartItems(getCartItemsFromStorage());
-    };
-    window.addEventListener('storage', handleStorageChange);
-    return () => window.removeEventListener('storage', handleStorageChange);
+    setIsClient(true);
+    const storedCart = localStorage.getItem('edemy-cart');
+    if (storedCart) {
+      const itemIds = JSON.parse(storedCart) as string[];
+      const items = allCourses.filter((course) => itemIds.includes(course.id));
+      setCartItems(items);
+    }
   }, []);
+
 
   const handleRemove = (id: string) => {
     const newCartItems = cartItems.filter((item) => item.id !== id);
@@ -66,6 +54,21 @@ export default function CartPage() {
   };
 
   const subtotal = cartItems.reduce((acc, item) => acc + item.price, 0);
+
+  if (!isClient) {
+    return (
+        <div className="container mx-auto px-4 md:px-6 py-12 md:py-24">
+             <header className="mb-12">
+                <h1 className="text-4xl md:text-5xl font-headline font-bold">
+                Shopping Cart
+                </h1>
+            </header>
+            <div className="text-center py-16">
+                <h2 className="text-2xl font-bold mb-4">Loading Cart...</h2>
+            </div>
+        </div>
+    );
+  }
 
   return (
     <div className="container mx-auto px-4 md:px-6 py-12 md:py-24">

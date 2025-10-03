@@ -78,21 +78,21 @@ export default function Home() {
               </p>
             </div>
             <div className="grid md:grid-cols-3 gap-8 text-center">
-              <div className="flex flex-col items-center space-y-4 p-8 bg-card rounded-xl shadow-sm">
+              <div className="flex flex-col items-center space-y-4 p-8 bg-card rounded-xl shadow-sm transition-all duration-300 hover:shadow-xl hover:-translate-y-2">
                 <div className="bg-primary/10 p-3 rounded-full">
                     <BookOpen className="h-8 w-8 text-primary" />
                 </div>
                 <h3 className="text-xl font-bold">Expert-Led Courses</h3>
                 <p className="text-muted-foreground">Learn from industry professionals who are passionate about teaching.</p>
               </div>
-              <div className="flex flex-col items-center space-y-4 p-8 bg-card rounded-xl shadow-sm">
+              <div className="flex flex-col items-center space-y-4 p-8 bg-card rounded-xl shadow-sm transition-all duration-300 hover:shadow-xl hover:-translate-y-2">
                 <div className="bg-primary/10 p-3 rounded-full">
                     <Users className="h-8 w-8 text-primary" />
                 </div>
                 <h3 className="text-xl font-bold">Vibrant Community</h3>
                 <p className="text-muted-foreground">Connect with a community of learners and instructors.</p>
               </div>
-              <div className="flex flex-col items-center space-y-4 p-8 bg-card rounded-xl shadow-sm">
+              <div className="flex flex-col items-center space-y-4 p-8 bg-card rounded-xl shadow-sm transition-all duration-300 hover:shadow-xl hover:-translate-y-2">
                 <div className="bg-primary/10 p-3 rounded-full">
                     <Star className="h-8 w-8 text-primary" />
                 </div>
@@ -114,7 +114,7 @@ export default function Home() {
             </div>
             <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
               {testimonials.map((testimonial) => (
-                <Card key={testimonial.id} className="bg-card border-none shadow-sm">
+                <Card key={testimonial.id} className="bg-card border-none shadow-sm transition-all duration-300 hover:shadow-xl hover:scale-105">
                   <CardContent className="p-6 space-y-4">
                     <div className="flex items-center space-x-4">
                       <Image

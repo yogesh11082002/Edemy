@@ -4,6 +4,7 @@ import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet';
 import { Menu, Search } from 'lucide-react';
 import Link from 'next/link';
 import { Input } from '../ui/input';
+import { ThemeToggle } from '../shared/theme-toggle';
 
 const navLinks = [
   { href: '/courses', label: 'Courses' },
@@ -35,6 +36,7 @@ export function Header() {
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
             <Input placeholder="Search courses..." className="pl-10 w-64" />
           </div>
+          <ThemeToggle />
           <div className="hidden md:flex items-center gap-2">
             <Button variant="ghost">Log In</Button>
             <Button className="bg-gradient-primary-accent text-primary-foreground shadow-md">Sign Up</Button>

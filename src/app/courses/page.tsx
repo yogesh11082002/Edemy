@@ -1,3 +1,6 @@
+"use client";
+
+import { useState, useMemo } from 'react';
 import { CourseCard } from "@/components/courses/course-card";
 import { courses, categories, levels, languages } from "@/lib/placeholder-data";
 import {
@@ -20,11 +23,64 @@ import { Button } from "@/components/ui/button";
 
 export default function CoursesPage({ searchParams }: { searchParams?: { query?: string } }) {
   const searchQuery = searchParams?.query || '';
-  const filteredCourses = courses.filter(course => 
-    course.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-    course.description.toLowerCase().includes(searchQuery.toLowerCase()) ||
-    course.category.toLowerCase().includes(searchQuery.toLowerCase())
-  );
+  
+  const [selectedCategory, setSelectedCategory] = useState('all');
+  const [selectedLevels, setSelectedLevels] = useState<string[]>([]);
+  const [priceRange, setPriceRange] = useState([200]);
+  const [selectedRating, setSelectedRating] = useState(0);
+  const [selectedLanguages, setSelectedLanguages] = useState<string[]>([]);
+
+  const handleLevelChange = (level: string) => {
+    setSelectedLevels(prev => 
+      prev.includes(level) ? prev.filter(l => l !== level) : [...prev, level]
+    );
+  };
+  
+  const handleLanguageChange = (lang: string) => {
+    setSelectedLanguages(prev =>
+      prev.includes(lang) ? prev.filter(l => l !== lang) : [...prev, lang]
+    );
+  }
+
+  const handleRatingChange = (rating: number) => {
+    setSelectedRating(prev => prev === rating ? 0 : rating);
+  }
+
+  const resetFilters = () => {
+    setSelectedCategory('all');
+    setSelectedLevels([]);
+    setPriceRange([200]);
+    setSelectedRating(0);
+    setSelectedLanguages([]);
+  }
+
+  const filteredCourses = useMemo(() => {
+    return courses.filter(course => {
+      // Search query filter
+      const matchesSearch = searchQuery ? (
+        course.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        course.description.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        course.category.toLowerCase().includes(searchQuery.toLowerCase())
+      ) : true;
+      
+      // Category filter
+      const matchesCategory = selectedCategory === 'all' || course.category === selectedCategory;
+
+      // Level filter
+      const matchesLevel = selectedLevels.length === 0 || selectedLevels.includes(course.level);
+
+      // Price filter
+      const matchesPrice = course.price <= priceRange[0];
+
+      // Rating filter
+      const matchesRating = selectedRating === 0 || course.rating >= selectedRating;
+
+      // Language filter
+      const matchesLanguage = selectedLanguages.length === 0 || selectedLanguages.includes(course.language);
+
+      return matchesSearch && matchesCategory && matchesLevel && matchesPrice && matchesRating && matchesLanguage;
+    });
+  }, [searchQuery, selectedCategory, selectedLevels, priceRange, selectedRating, selectedLanguages]);
 
   return (
     <div className="container mx-auto px-4 md:px-6 py-12">
@@ -40,18 +96,22 @@ export default function CoursesPage({ searchParams }: { searchParams?: { query?:
         <aside className="md:col-span-1">
           <Card className="sticky top-24">
             <CardHeader>
-              <CardTitle className="font-headline text-2xl">Filters</CardTitle>
+              <div className="flex justify-between items-center">
+                <CardTitle className="font-headline text-2xl">Filters</CardTitle>
+                <Button variant="ghost" size="sm" onClick={resetFilters}>Reset</Button>
+              </div>
             </CardHeader>
             <CardContent className="space-y-6">
               <div className="space-y-2">
                 <Label htmlFor="category">Category</Label>
-                <Select>
+                <Select value={selectedCategory} onValueChange={setSelectedCategory}>
                   <SelectTrigger id="category">
                     <SelectValue placeholder="All Categories" />
                   </SelectTrigger>
                   <SelectContent>
+                    <SelectItem value="all">All Categories</SelectItem>
                     {categories.map((cat) => (
-                      <SelectItem key={cat} value={cat.toLowerCase()}>
+                      <SelectItem key={cat} value={cat}>
                         {cat}
                       </SelectItem>
                     ))}
@@ -63,15 +123,19 @@ export default function CoursesPage({ searchParams }: { searchParams?: { query?:
                 <div className="space-y-2">
                   {levels.map((level) => (
                     <div key={level} className="flex items-center space-x-2">
-                      <Checkbox id={level.toLowerCase()} />
+                      <Checkbox 
+                        id={level.toLowerCase()} 
+                        checked={selectedLevels.includes(level)}
+                        onCheckedChange={() => handleLevelChange(level)}
+                      />
                       <Label htmlFor={level.toLowerCase()}>{level}</Label>
                     </div>
                   ))}
                 </div>
               </div>
               <div className="space-y-2">
-                <Label htmlFor="price-range">Price Range</Label>
-                <Slider defaultValue={[50]} max={200} step={1} id="price-range" />
+                <Label htmlFor="price-range">Price (up to ${priceRange[0]})</Label>
+                <Slider value={priceRange} onValueChange={setPriceRange} max={200} step={1} id="price-range" />
                 <div className="flex justify-between text-sm text-muted-foreground">
                   <span>$0</span>
                   <span>$200</span>
@@ -82,7 +146,11 @@ export default function CoursesPage({ searchParams }: { searchParams?: { query?:
                 <div className="space-y-2">
                   {[4.5, 4.0, 3.5, 3.0].map((rating) => (
                     <div key={rating} className="flex items-center space-x-2">
-                      <Checkbox id={`rating-${rating}`} />
+                      <Checkbox 
+                        id={`rating-${rating}`} 
+                        checked={selectedRating === rating}
+                        onCheckedChange={() => handleRatingChange(rating)}
+                      />
                       <Label htmlFor={`rating-${rating}`}>{rating} & up</Label>
                     </div>
                   ))}
@@ -93,13 +161,16 @@ export default function CoursesPage({ searchParams }: { searchParams?: { query?:
                 <div className="space-y-2">
                   {languages.map((lang) => (
                     <div key={lang} className="flex items-center space-x-2">
-                      <Checkbox id={lang.toLowerCase()} />
+                       <Checkbox 
+                        id={lang.toLowerCase()} 
+                        checked={selectedLanguages.includes(lang)}
+                        onCheckedChange={() => handleLanguageChange(lang)}
+                      />
                       <Label htmlFor={lang.toLowerCase()}>{lang}</Label>
                     </div>
                   ))}
                 </div>
               </div>
-              <Button className="w-full bg-gradient-primary-accent text-primary-foreground">Apply Filters</Button>
             </CardContent>
           </Card>
         </aside>
@@ -109,16 +180,18 @@ export default function CoursesPage({ searchParams }: { searchParams?: { query?:
               <h2 className="text-xl font-semibold">
                 Showing results for "{searchQuery}"
               </h2>
-              <p className="text-muted-foreground text-sm">{filteredCourses.length} courses found.</p>
             </div>
           )}
+           <div className="mb-4">
+              <p className="text-muted-foreground text-sm">{filteredCourses.length} courses found.</p>
+            </div>
           <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
             {filteredCourses.length > 0 ? (
               filteredCourses.map((course) => (
                 <CourseCard key={course.id} course={course} />
               ))
             ) : (
-              <p>No courses found for your search.</p>
+              <p className="col-span-full text-center text-muted-foreground">No courses match your criteria. Try adjusting your filters.</p>
             )}
           </div>
         </main>

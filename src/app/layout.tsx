@@ -9,9 +9,6 @@ import { ThemeProvider } from '@/components/providers/theme-provider';
 export const metadata: Metadata = {
   title: 'Edemy',
   description: 'A modern Learning Management System',
-  icons: {
-    icon: '/favicon.ico',
-  },
 };
 
 export default function RootLayout({

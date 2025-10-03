@@ -1,7 +1,7 @@
 "use client";
 
 import { courses, reviews } from "@/lib/placeholder-data";
-import { notFound } from "next/navigation";
+import { notFound, useParams } from "next/navigation";
 import Image from "next/image";
 import { StarRating } from "@/components/courses/star-rating";
 import {
@@ -28,11 +28,8 @@ import {
 import Link from "next/link";
 import { useState } from "react";
 
-export default function CourseDetailPage({
-  params,
-}: {
-  params: { courseId: string };
-}) {
+export default function CourseDetailPage() {
+  const params = useParams<{ courseId: string }>();
   const [showVideo, setShowVideo] = useState(false);
   const course = courses.find((c) => c.id === params.courseId);
 

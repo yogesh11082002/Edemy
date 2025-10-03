@@ -68,7 +68,7 @@ export default function ContactPage() {
                 <CardContent className="space-y-4">
                     <div className="flex items-center gap-4">
                         <Mail className="h-6 w-6 text-primary"/>
-                        <a href="mailto:contact@learnverse.com" className="text-muted-foreground hover:text-primary">contact@learnverse.com</a>
+                        <a href="mailto:contact@edemy.com" className="text-muted-foreground hover:text-primary">contact@edemy.com</a>
                     </div>
                     <div className="flex items-center gap-4">
                         <Phone className="h-6 w-6 text-primary"/>

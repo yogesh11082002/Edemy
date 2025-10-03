@@ -7,7 +7,7 @@ import { Toaster } from '@/components/ui/toaster';
 import { ThemeProvider } from '@/components/providers/theme-provider';
 
 export const metadata: Metadata = {
-  title: 'LearnVerse',
+  title: 'Edemy',
   description: 'A modern Learning Management System',
   icons: {
     icon: '/favicon.ico',

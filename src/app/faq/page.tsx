@@ -7,8 +7,8 @@ import {
 
 const faqs = [
   {
-    question: "What is LearnVerse?",
-    answer: "LearnVerse is an online learning platform offering a wide range of courses on various subjects, taught by industry experts.",
+    question: "What is Edemy?",
+    answer: "Edemy is an online learning platform offering a wide range of courses on various subjects, taught by industry experts.",
   },
   {
     question: "How do I enroll in a course?",
@@ -36,7 +36,7 @@ export default function FaqPage() {
           Frequently Asked Questions
         </h1>
         <p className="text-lg text-muted-foreground mt-2 max-w-2xl mx-auto">
-          Find answers to common questions about LearnVerse.
+          Find answers to common questions about Edemy.
         </p>
       </header>
       <div className="max-w-3xl mx-auto">

@@ -164,9 +164,9 @@ export const reviews: Review[] = [
 ];
 
 export const testimonials: Testimonial[] = [
-  { id: 'test-1', name: 'Sarah Lee', role: 'Web Developer', avatar: 'https://picsum.photos/seed/user1/100/100', quote: 'LearnVerse has been a game-changer for my career. The courses are top-notch and the instructors are industry experts. I was able to land a better job after completing the Web Development Bootcamp.'},
+  { id: 'test-1', name: 'Sarah Lee', role: 'Web Developer', avatar: 'https://picsum.photos/seed/user1/100/100', quote: 'Edemy has been a game-changer for my career. The courses are top-notch and the instructors are industry experts. I was able to land a better job after completing the Web Development Bootcamp.'},
   { id: 'test-2', name: 'David Chen', role: 'UX Designer', avatar: 'https://picsum.photos/seed/user2/100/100', quote: 'The flexibility to learn at my own pace was exactly what I needed. The community forums are also a great place to get help and connect with other learners. Highly recommended!'},
-  { id: 'test-3', name: 'Emily Rodriguez', role: 'Marketing Manager', avatar: 'https://picsum.photos/seed/user3/100/100', quote: 'I\'ve taken several business courses on LearnVerse and they\'ve all exceeded my expectations. The content is practical, relevant, and has helped me grow my business significantly.'}
+  { id: 'test-3', name: 'Emily Rodriguez', role: 'Marketing Manager', avatar: 'https://picsum.photos/seed/user3/100/100', quote: 'I\'ve taken several business courses on Edemy and they\'ve all exceeded my expectations. The content is practical, relevant, and has helped me grow my business significantly.'}
 ]
 
 export const categories = [...new Set(courses.map(course => course.category))];

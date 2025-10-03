@@ -15,7 +15,7 @@ export default function AboutPage() {
       {/* Hero Section */}
       <section className="relative py-20 md:py-32 bg-secondary">
         <div className="container mx-auto px-4 md:px-6 text-center">
-          <h1 className="text-4xl md:text-5xl font-bold font-headline">About LearnVerse</h1>
+          <h1 className="text-4xl md:text-5xl font-bold font-headline">About Edemy</h1>
           <p className="mt-4 text-lg md:text-xl text-muted-foreground max-w-3xl mx-auto">
             We are on a mission to make quality education accessible to everyone, everywhere. Learn, grow, and achieve your goals with our expert-led courses.
           </p>
@@ -67,7 +67,7 @@ export default function AboutPage() {
           <div className="text-center space-y-4 mb-12">
             <h2 className="text-3xl md:text-4xl font-bold font-headline">Meet Our Team</h2>
             <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-              The passionate people behind LearnVerse, dedicated to your success.
+              The passionate people behind Edemy, dedicated to your success.
             </p>
           </div>
           <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-8">

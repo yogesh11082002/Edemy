@@ -17,7 +17,7 @@ export default function Home() {
           <div className="container mx-auto px-4 md:px-6 grid md:grid-cols-2 gap-12 items-center">
             <div className="space-y-6 text-center md:text-left">
               <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold tracking-tighter">
-                Unlock Your Potential with LearnVerse
+                Unlock Your Potential with Edemy
               </h1>
               <p className="text-lg md:text-xl text-muted-foreground max-w-xl mx-auto md:mx-0">
                 Explore thousands of courses on programming, design, business, and more. Start learning today and advance your career.
@@ -68,11 +68,11 @@ export default function Home() {
           </div>
         </section>
         
-        {/* Why LearnVerse Section */}
+        {/* Why Edemy Section */}
         <section className="py-16 md:py-24 bg-background">
           <div className="container mx-auto px-4 md:px-6">
             <div className="text-center space-y-4 mb-12">
-              <h2 className="text-3xl md:text-4xl font-bold">Why Choose LearnVerse?</h2>
+              <h2 className="text-3xl md:text-4xl font-bold">Why Choose Edemy?</h2>
               <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
                 We provide a world-class learning experience with benefits that matter.
               </p>

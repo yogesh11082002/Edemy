@@ -39,7 +39,7 @@ export function Footer() {
           </div>
         </div>
         <div className="mt-12 pt-8 border-t border-border text-center text-sm text-muted-foreground">
-          <p>&copy; {new Date().getFullYear()} LearnVerse. All rights reserved.</p>
+          <p>&copy; {new Date().getFullYear()} Edemy. All rights reserved.</p>
         </div>
       </div>
     </footer>

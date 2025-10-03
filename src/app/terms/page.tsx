@@ -9,7 +9,7 @@ export default function TermsPage() {
       </header>
       <div className="prose prose-lg max-w-none text-muted-foreground">
         <p>
-          Welcome to LearnVerse! These Terms of Service ("Terms") govern your use of our website, courses, and services. By accessing or using LearnVerse, you agree to be bound by these Terms.
+          Welcome to Edemy! These Terms of Service ("Terms") govern your use of our website, courses, and services. By accessing or using Edemy, you agree to be bound by these Terms.
         </p>
 
         <h2 className="text-foreground font-bold">1. Accounts</h2>

@@ -9,7 +9,7 @@ export default function PrivacyPage() {
       </header>
       <div className="prose prose-lg max-w-none text-muted-foreground">
         <p>
-          Your privacy is important to us. It is LearnVerse's policy to respect your privacy regarding any information we may collect from you across our website.
+          Your privacy is important to us. It is Edemy's policy to respect your privacy regarding any information we may collect from you across our website.
         </p>
 
         <h2 className="text-foreground font-bold">1. Information We Collect</h2>
@@ -33,7 +33,7 @@ export default function PrivacyPage() {
 
         <h2 className="text-foreground font-bold">3. Cookies</h2>
         <p>
-            Like any other website, LearnVerse uses 'cookies'. These cookies are used to store information including visitors' preferences, and the pages on the website that the visitor accessed or visited. The information is used to optimize the users' experience by customizing our web page content based on visitors' browser type and/or other information.
+            Like any other website, Edemy uses 'cookies'. These cookies are used to store information including visitors' preferences, and the pages on the website that the visitor accessed or visited. The information is used to optimize the users' experience by customizing our web page content based on visitors' browser type and/or other information.
         </p>
 
         <h2 className="text-foreground font-bold">4. Security</h2>

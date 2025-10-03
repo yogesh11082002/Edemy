@@ -1,3 +1,5 @@
+"use client";
+
 import { courses, reviews } from "@/lib/placeholder-data";
 import { notFound } from "next/navigation";
 import Image from "next/image";
@@ -21,14 +23,17 @@ import {
   User,
   Users,
   Video,
+  X,
 } from "lucide-react";
 import Link from "next/link";
+import { useState } from "react";
 
 export default function CourseDetailPage({
   params,
 }: {
   params: { courseId: string };
 }) {
+  const [showVideo, setShowVideo] = useState(false);
   const course = courses.find((c) => c.id === params.courseId);
 
   if (!course) {
@@ -171,11 +176,11 @@ export default function CourseDetailPage({
                         className="rounded-t-lg object-cover w-full aspect-video"
                         data-ai-hint={course.imageHint}
                     />
-                    <Link href="https://www.youtube.com/watch?v=dQw4w9WgXcQ" target="_blank" rel="noopener noreferrer" className="absolute inset-0 bg-black/40 flex items-center justify-center cursor-pointer opacity-0 group-hover:opacity-100 transition-opacity">
+                    <div onClick={() => setShowVideo(true)} className="absolute inset-0 bg-black/40 flex items-center justify-center cursor-pointer opacity-0 group-hover:opacity-100 transition-opacity">
                         <Button variant="secondary" size="icon" className="h-16 w-16 rounded-full">
                             <Play className="h-8 w-8 text-primary" />
                         </Button>
-                    </Link>
+                    </div>
                 </div>
               <CardContent className="p-6 space-y-4">
                 <span className="text-3xl font-bold text-primary">${course.price}</span>
@@ -195,6 +200,26 @@ export default function CourseDetailPage({
           </aside>
         </div>
       </div>
+      {showVideo && (
+        <div className="fixed inset-0 bg-black/80 z-50 flex items-center justify-center" onClick={() => setShowVideo(false)}>
+            <div className="relative w-full max-w-4xl" onClick={(e) => e.stopPropagation()}>
+                 <button onClick={() => setShowVideo(false)} className="absolute -top-10 right-0 text-white hover:text-primary transition-colors">
+                     <X className="h-8 w-8" />
+                 </button>
+                <div className="aspect-video bg-black">
+                     <iframe 
+                        width="100%" 
+                        height="100%" 
+                        src="https://www.youtube.com/embed/dQw4w9WgXcQ?autoplay=1" 
+                        title="YouTube video player" 
+                        frameBorder="0" 
+                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
+                        allowFullScreen
+                    ></iframe>
+                </div>
+            </div>
+        </div>
+      )}
     </div>
   );
 }

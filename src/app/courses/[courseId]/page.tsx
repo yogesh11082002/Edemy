@@ -64,16 +64,6 @@ export default function CourseDetailPage() {
     if (!cartIds.includes(course.id)) {
       cartIds.push(course.id);
       localStorage.setItem('edemy-cart', JSON.stringify(cartIds));
-      toast({
-        title: 'Added to cart!',
-        description: `"${course.title}" has been added to your cart.`,
-      });
-    } else {
-      toast({
-        variant: 'default',
-        title: 'Already in cart',
-        description: `"${course.title}" is already in your cart.`,
-      });
     }
     router.push('/cart');
   };

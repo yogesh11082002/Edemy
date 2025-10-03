@@ -1,19 +1,19 @@
-"use client";
+'use client';
 
-import { courses, reviews } from "@/lib/placeholder-data";
-import { notFound, useParams } from "next/navigation";
-import Image from "next/image";
-import { StarRating } from "@/components/courses/star-rating";
+import { courses, reviews } from '@/lib/placeholder-data';
+import { notFound, useParams } from 'next/navigation';
+import Image from 'next/image';
+import { StarRating } from '@/components/courses/star-rating';
 import {
   Accordion,
   AccordionContent,
   AccordionItem,
   AccordionTrigger,
-} from "@/components/ui/accordion";
-import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { useToast } from "@/hooks/use-toast";
+} from '@/components/ui/accordion';
+import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import { useToast } from '@/hooks/use-toast';
 import {
   CheckCircle,
   Clock,
@@ -25,11 +25,11 @@ import {
   Users,
   Video,
   X,
-} from "lucide-react";
-import Link from "next/link";
-import { useState, useEffect } from "react";
-import { useRouter } from "next/navigation";
-import type { Course } from "@/lib/types";
+} from 'lucide-react';
+import Link from 'next/link';
+import { useState, useEffect } from 'react';
+import { useRouter } from 'next/navigation';
+import type { Course } from '@/lib/types';
 
 export default function CourseDetailPage() {
   const params = useParams<{ courseId: string }>();
@@ -47,7 +47,11 @@ export default function CourseDetailPage() {
     // Show a loading state or return null until the course is found
     // Or you can handle notFound() inside useEffect if the course is definitively not there
     // For now, we'll return a loading indicator.
-     return <div className="container mx-auto px-4 md:px-6 py-12 text-center">Loading...</div>;
+    return (
+      <div className="container mx-auto px-4 md:px-6 py-12 text-center">
+        Loading...
+      </div>
+    );
   }
 
   if (course === undefined) {
@@ -55,27 +59,27 @@ export default function CourseDetailPage() {
   }
 
   const handleAddToCart = () => {
-    const storedCart = localStorage.getItem("edemy-cart");
+    const storedCart = localStorage.getItem('edemy-cart');
     let cartIds = storedCart ? JSON.parse(storedCart) : [];
     if (!cartIds.includes(course.id)) {
       cartIds.push(course.id);
-      localStorage.setItem("edemy-cart", JSON.stringify(cartIds));
+      localStorage.setItem('edemy-cart', JSON.stringify(cartIds));
       toast({
-        title: "Added to cart!",
+        title: 'Added to cart!',
         description: `"${course.title}" has been added to your cart.`,
       });
     } else {
-       toast({
-        variant: "default",
-        title: "Already in cart",
+      toast({
+        variant: 'default',
+        title: 'Already in cart',
         description: `"${course.title}" is already in your cart.`,
       });
     }
+    router.push('/cart');
   };
 
   const handleEnrollNow = () => {
     handleAddToCart();
-    router.push("/cart");
   };
 
   const courseReviews = reviews.slice(0, 2);
@@ -93,15 +97,19 @@ export default function CourseDetailPage() {
               {course.summary}
             </p>
             <div className="flex items-center gap-4 mt-4 text-sm">
-                <div className="flex items-center gap-2">
-                    <StarRating rating={course.rating} />
-                    <span>{course.rating} ({course.reviewCount} reviews)</span>
-                </div>
-                <span>{course.enrolledStudents?.toLocaleString()} students</span>
+              <div className="flex items-center gap-2">
+                <StarRating rating={course.rating} />
+                <span>
+                  {course.rating} ({course.reviewCount} reviews)
+                </span>
+              </div>
+              <span>{course.enrolledStudents?.toLocaleString()} students</span>
             </div>
-             <div className="flex items-center gap-2 mt-2 text-sm">
-                <span>Created by</span>
-                <span className="font-semibold underline">{course.instructor.name}</span>
+            <div className="flex items-center gap-2 mt-2 text-sm">
+              <span>Created by</span>
+              <span className="font-semibold underline">
+                {course.instructor.name}
+              </span>
             </div>
           </div>
         </div>
@@ -150,8 +158,10 @@ export default function CourseDetailPage() {
                           ></iframe>
                         </div>
                         <div className="flex items-center justify-between">
-                            <p>Video Content</p>
-                            <p className="text-sm text-muted-foreground">{lesson.duration}</p>
+                          <p>Video Content</p>
+                          <p className="text-sm text-muted-foreground">
+                            {lesson.duration}
+                          </p>
                         </div>
                       </AccordionContent>
                     </AccordionItem>
@@ -167,21 +177,40 @@ export default function CourseDetailPage() {
                 </CardTitle>
               </CardHeader>
               <CardContent className="space-y-4">
-                 <div className="flex items-center gap-4">
-                    <Avatar className="h-20 w-20">
-                        <AvatarImage src={course.instructor.avatar} alt={course.instructor.name} />
-                        <AvatarFallback>{course.instructor.name.charAt(0)}</AvatarFallback>
-                    </Avatar>
-                    <div>
-                        <h3 className="font-bold text-lg">{course.instructor.name}</h3>
-                        <div className="flex items-center gap-4 text-sm text-muted-foreground mt-1">
-                            <div className="flex items-center gap-1"><Star className="h-4 w-4 text-amber-500" /> {course.instructor.rating} Rating</div>
-                            <div className="flex items-center gap-1"><Users className="h-4 w-4" /> {course.instructor.studentCount.toLocaleString()} Students</div>
-                            <div className="flex items-center gap-1"><Video className="h-4 w-4" /> {course.instructor.courseCount} Courses</div>
-                        </div>
+                <div className="flex items-center gap-4">
+                  <Avatar className="h-20 w-20">
+                    <AvatarImage
+                      src={course.instructor.avatar}
+                      alt={course.instructor.name}
+                    />
+                    <AvatarFallback>
+                      {course.instructor.name.charAt(0)}
+                    </AvatarFallback>
+                  </Avatar>
+                  <div>
+                    <h3 className="font-bold text-lg">
+                      {course.instructor.name}
+                    </h3>
+                    <div className="flex items-center gap-4 text-sm text-muted-foreground mt-1">
+                      <div className="flex items-center gap-1">
+                        <Star className="h-4 w-4 text-amber-500" />{' '}
+                        {course.instructor.rating} Rating
+                      </div>
+                      <div className="flex items-center gap-1">
+                        <Users className="h-4 w-4" />{' '}
+                        {course.instructor.studentCount.toLocaleString()}{' '}
+                        Students
+                      </div>
+                      <div className="flex items-center gap-1">
+                        <Video className="h-4 w-4" />{' '}
+                        {course.instructor.courseCount} Courses
+                      </div>
                     </div>
-                 </div>
-                 <p className="text-muted-foreground">{course.instructor.bio}</p>
+                  </div>
+                </div>
+                <p className="text-muted-foreground">
+                  {course.instructor.bio}
+                </p>
               </CardContent>
             </Card>
 
@@ -195,16 +224,25 @@ export default function CourseDetailPage() {
                 {courseReviews.map((review) => (
                   <div key={review.id} className="flex gap-4">
                     <Avatar>
-                      <AvatarImage src={review.student.avatar} alt={review.student.name}/>
-                      <AvatarFallback>{review.student.name.charAt(0)}</AvatarFallback>
+                      <AvatarImage
+                        src={review.student.avatar}
+                        alt={review.student.name}
+                      />
+                      <AvatarFallback>
+                        {review.student.name.charAt(0)}
+                      </AvatarFallback>
                     </Avatar>
                     <div className="flex-1">
                       <div className="flex justify-between items-center">
                         <h4 className="font-semibold">{review.student.name}</h4>
-                        <span className="text-xs text-muted-foreground">{review.createdAt}</span>
+                        <span className="text-xs text-muted-foreground">
+                          {review.createdAt}
+                        </span>
                       </div>
-                      <StarRating rating={review.rating} className="my-1"/>
-                      <p className="text-muted-foreground text-sm">{review.comment}</p>
+                      <StarRating rating={review.rating} className="my-1" />
+                      <p className="text-muted-foreground text-sm">
+                        {review.comment}
+                      </p>
                     </div>
                   </div>
                 ))}
@@ -215,37 +253,67 @@ export default function CourseDetailPage() {
           {/* Sidebar */}
           <aside className="lg:col-span-1 relative">
             <Card className="sticky top-24">
-                <div className="relative group">
-                    <Image
-                        src={course.imageUrl}
-                        alt={`Preview for ${course.title}`}
-                        width={600}
-                        height={338}
-                        className="rounded-t-lg object-cover w-full aspect-video"
-                        data-ai-hint={course.imageHint}
-                    />
-                    <div onClick={() => setShowVideo(true)} className="absolute inset-0 bg-black/40 flex items-center justify-center cursor-pointer opacity-0 group-hover:opacity-100 transition-opacity">
-                        <Button variant="secondary" size="icon" className="h-16 w-16 rounded-full">
-                            <Play className="h-8 w-8 text-primary" />
-                        </Button>
-                    </div>
+              <div className="relative group">
+                <Image
+                  src={course.imageUrl}
+                  alt={`Preview for ${course.title}`}
+                  width={600}
+                  height={338}
+                  className="rounded-t-lg object-cover w-full aspect-video"
+                  data-ai-hint={course.imageHint}
+                />
+                <div
+                  onClick={() => setShowVideo(true)}
+                  className="absolute inset-0 bg-black/40 flex items-center justify-center cursor-pointer opacity-0 group-hover:opacity-100 transition-opacity"
+                >
+                  <Button
+                    variant="secondary"
+                    size="icon"
+                    className="h-16 w-16 rounded-full"
+                  >
+                    <Play className="h-8 w-8 text-primary" />
+                  </Button>
                 </div>
+              </div>
               <CardContent className="p-6 space-y-4">
-                <span className="text-3xl font-bold text-primary">${course.price}</span>
+                <span className="text-3xl font-bold text-primary">
+                  ${course.price}
+                </span>
                 <div className="flex gap-2">
-                    <Button size="lg" className="w-full bg-gradient-primary-accent text-primary-foreground" onClick={handleEnrollNow}>
-                      Enroll Now
-                    </Button>
-                    <Button size="lg" variant="outline" className="w-full" onClick={handleAddToCart}>
-                      Add to Cart
-                    </Button>
+                  <Button
+                    size="lg"
+                    className="w-full bg-gradient-primary-accent text-primary-foreground"
+                    onClick={handleEnrollNow}
+                  >
+                    Enroll Now
+                  </Button>
+                  <Button
+                    size="lg"
+                    variant="outline"
+                    className="w-full"
+                    onClick={handleAddToCart}
+                  >
+                    Add to Cart
+                  </Button>
                 </div>
                 <div className="space-y-3 text-sm pt-4">
-                    <h4 className="font-semibold">This course includes:</h4>
-                    <div className="flex items-center gap-2"><Clock className="h-4 w-4 text-muted-foreground"/> {course.duration} on-demand video</div>
-                    <div className="flex items-center gap-2"><Globe className="h-4 w-4 text-muted-foreground"/> Certificate of completion</div>
-                    <div className="flex items-center gap-2"><User className="h-4 w-4 text-muted-foreground"/> Taught in {course.language}</div>
-                    <div className="flex items-center gap-2"><CheckCircle className="h-4 w-4 text-muted-foreground"/> {course.level} level</div>
+                  <h4 className="font-semibold">This course includes:</h4>
+                  <div className="flex items-center gap-2">
+                    <Clock className="h-4 w-4 text-muted-foreground" />{' '}
+                    {course.duration} on-demand video
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <Globe className="h-4 w-4 text-muted-foreground" />{' '}
+                    Certificate of completion
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <User className="h-4 w-4 text-muted-foreground" /> Taught in{' '}
+                    {course.language}
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <CheckCircle className="h-4 w-4 text-muted-foreground" />{' '}
+                    {course.level} level
+                  </div>
                 </div>
               </CardContent>
             </Card>
@@ -253,22 +321,31 @@ export default function CourseDetailPage() {
         </div>
       </div>
       {showVideo && (
-        <div className="fixed inset-0 bg-black/80 z-50 flex items-center justify-center" onClick={() => setShowVideo(false)}>
-            <div className="relative w-full max-w-4xl" onClick={(e) => e.stopPropagation()}>
-                 <button onClick={() => setShowVideo(false)} className="absolute -top-10 right-0 text-white hover:text-primary transition-colors">
-                     <X className="h-8 w-8" />
-                 </button>
-                <div className="aspect-video bg-black">
-                     <iframe
-                        width="100%"
-                        height="100%"
-                        src={course.lessons[0].videoUrl}
-                        title="YouTube video player"
-                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                        allowFullScreen
-                    ></iframe>
-                </div>
+        <div
+          className="fixed inset-0 bg-black/80 z-50 flex items-center justify-center"
+          onClick={() => setShowVideo(false)}
+        >
+          <div
+            className="relative w-full max-w-4xl"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <button
+              onClick={() => setShowVideo(false)}
+              className="absolute -top-10 right-0 text-white hover:text-primary transition-colors"
+            >
+              <X className="h-8 w-8" />
+            </button>
+            <div className="aspect-video bg-black">
+              <iframe
+                width="100%"
+                height="100%"
+                src={course.lessons[0].videoUrl}
+                title="YouTube video player"
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                allowFullScreen
+              ></iframe>
             </div>
+          </div>
         </div>
       )}
     </div>

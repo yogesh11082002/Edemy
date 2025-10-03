@@ -4,7 +4,7 @@ export const instructors: Instructor[] = [
   {
     id: 'inst-1',
     name: 'John Doe',
-    avatar: 'https://picsum.photos/seed/inst1/100/100',
+    avatar: 'https://images.unsplash.com/photo-1560250097-0b93528c311a?w=100&q=80',
     bio: 'Software Engineer with 10+ years of experience in web development. Passionate about teaching and building scalable applications.',
     rating: 4.8,
     studentCount: 12500,
@@ -13,7 +13,7 @@ export const instructors: Instructor[] = [
   {
     id: 'inst-2',
     name: 'Jane Smith',
-    avatar: 'https://picsum.photos/seed/inst2/100/100',
+    avatar: 'https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=100&q=80',
     bio: 'Award-winning UX/UI designer focused on creating beautiful and intuitive user experiences. Loves to share design principles with students.',
     rating: 4.9,
     studentCount: 25000,
@@ -22,9 +22,9 @@ export const instructors: Instructor[] = [
 ];
 
 export const students: Student[] = [
-  { id: 'stu-1', name: 'Alice', avatar: 'https://picsum.photos/seed/stu1/100/100' },
-  { id: 'stu-2', name: 'Bob', avatar: 'https://picsum.photos/seed/stu2/100/100' },
-  { id: 'stu-3', name: 'Charlie', avatar: 'https://picsum.photos/seed/stu3/100/100' },
+  { id: 'stu-1', name: 'Alice', avatar: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=100&q=80' },
+  { id: 'stu-2', name: 'Bob', avatar: 'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=100&q=80' },
+  { id: 'stu-3', name: 'Charlie', avatar: 'https://images.unsplash.com/photo-1527982988734-e4c1c04f0391?w=100&q=80' },
 ];
 
 export const courses: Course[] = [
@@ -39,7 +39,7 @@ export const courses: Course[] = [
     price: 84.99,
     rating: 4.7,
     reviewCount: 1258,
-    imageUrl: 'https://picsum.photos/seed/course1/600/400',
+    imageUrl: 'https://images.unsplash.com/photo-1461749280684-dccba630e2f6?w=600&q=80',
     imageHint: 'programming code',
     language: 'English',
     duration: '62 hours',
@@ -61,7 +61,7 @@ export const courses: Course[] = [
     price: 49.99,
     rating: 4.9,
     reviewCount: 3201,
-    imageUrl: 'https://picsum.photos/seed/course2/600/400',
+    imageUrl: 'https://images.unsplash.com/photo-1581291518857-4e27b48ff24e?w=600&q=80',
     imageHint: 'design desk',
     language: 'English',
     duration: '35.5 hours',
@@ -82,7 +82,7 @@ export const courses: Course[] = [
     price: 129.99,
     rating: 4.6,
     reviewCount: 890,
-    imageUrl: 'https://picsum.photos/seed/course3/600/400',
+    imageUrl: 'https://images.unsplash.com/photo-1460925895917-afdab827c52f?w=600&q=80',
     imageHint: 'business meeting',
     language: 'English',
     duration: '40.5 hours',
@@ -103,7 +103,7 @@ export const courses: Course[] = [
     price: 29.99,
     rating: 4.8,
     reviewCount: 1543,
-    imageUrl: 'https://picsum.photos/seed/course4/600/400',
+    imageUrl: 'https://images.unsplash.com/photo-1506126613408-4e7e9b7d5d9a?w=600&q=80',
     imageHint: 'meditation nature',
     language: 'English',
     duration: '10 hours',
@@ -124,7 +124,7 @@ export const courses: Course[] = [
     price: 99.99,
     rating: 4.8,
     reviewCount: 2200,
-    imageUrl: 'https://picsum.photos/seed/course5/600/400',
+    imageUrl: 'https://images.unsplash.com/photo-1554080353-a576cf803bda?w=600&q=80',
     imageHint: 'camera tripod',
     language: 'English',
     duration: '22 hours',
@@ -145,7 +145,7 @@ export const courses: Course[] = [
     price: 79.99,
     rating: 4.7,
     reviewCount: 1800,
-    imageUrl: 'https://picsum.photos/seed/course6/600/400',
+    imageUrl: 'https://images.unsplash.com/photo-1510915361894-db8b60106cb1?w=600&q=80',
     imageHint: 'playing guitar',
     language: 'English',
     duration: '30 hours',
@@ -164,9 +164,9 @@ export const reviews: Review[] = [
 ];
 
 export const testimonials: Testimonial[] = [
-  { id: 'test-1', name: 'Sarah Lee', role: 'Web Developer', avatar: 'https://picsum.photos/seed/user1/100/100', quote: 'Edemy has been a game-changer for my career. The courses are top-notch and the instructors are industry experts. I was able to land a better job after completing the Web Development Bootcamp.'},
-  { id: 'test-2', name: 'David Chen', role: 'UX Designer', avatar: 'https://picsum.photos/seed/user2/100/100', quote: 'The flexibility to learn at my own pace was exactly what I needed. The community forums are also a great place to get help and connect with other learners. Highly recommended!'},
-  { id: 'test-3', name: 'Emily Rodriguez', role: 'Marketing Manager', avatar: 'https://picsum.photos/seed/user3/100/100', quote: 'I\'ve taken several business courses on Edemy and they\'ve all exceeded my expectations. The content is practical, relevant, and has helped me grow my business significantly.'}
+  { id: 'test-1', name: 'Sarah Lee', role: 'Web Developer', avatar: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=100&q=80', quote: 'Edemy has been a game-changer for my career. The courses are top-notch and the instructors are industry experts. I was able to land a better job after completing the Web Development Bootcamp.'},
+  { id: 'test-2', name: 'David Chen', role: 'UX Designer', avatar: 'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=100&q=80', quote: 'The flexibility to learn at my own pace was exactly what I needed. The community forums are also a great place to get help and connect with other learners. Highly recommended!'},
+  { id: 'test-3', name: 'Emily Rodriguez', role: 'Marketing Manager', avatar: 'https://images.unsplash.com/photo-1527982988734-e4c1c04f0391?w=100&q=80', quote: 'I\'ve taken several business courses on Edemy and they\'ve all exceeded my expectations. The content is practical, relevant, and has helped me grow my business significantly.'}
 ]
 
 export const categories = [...new Set(courses.map(course => course.category))];

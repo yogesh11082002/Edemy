@@ -1,3 +1,5 @@
+"use client";
+
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { CourseCard } from '@/components/courses/course-card';
@@ -5,6 +7,7 @@ import { courses, testimonials } from '@/lib/placeholder-data';
 import { ArrowRight, BookOpen, Star, Users } from 'lucide-react';
 import Image from 'next/image';
 import Link from 'next/link';
+import { motion } from 'framer-motion';
 
 export default function Home() {
   const featuredCourses = courses.slice(0, 4);
@@ -16,14 +19,29 @@ export default function Home() {
         <section className="relative w-full py-20 md:py-32 bg-background">
           <div className="container mx-auto px-4 md:px-6 grid md:grid-cols-2 gap-12 items-center">
             <div className="space-y-6 text-center md:text-left">
-              <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold tracking-tighter">
+              <motion.h1 
+                className="text-4xl md:text-5xl lg:text-6xl font-bold tracking-tighter"
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.5 }}
+              >
                 Unlock Your Potential with Edemy
-              </h1>
-              <p className="text-lg md:text-xl text-muted-foreground max-w-xl mx-auto md:mx-0">
+              </motion.h1>
+              <motion.p 
+                className="text-lg md:text-xl text-muted-foreground max-w-xl mx-auto md:mx-0"
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.5, delay: 0.1 }}
+              >
                 Explore thousands of courses on programming, design, business, and more. Start learning today and advance your career.
-              </p>
-              <div className="flex flex-col sm:flex-row gap-4 justify-center md:justify-start">
-                <Button asChild size="lg" className="bg-gradient-primary-accent text-primary-foreground hover:opacity-90 transition-opacity shadow-lg">
+              </motion.p>
+              <motion.div 
+                className="flex flex-col sm:flex-row gap-4 justify-center md:justify-start"
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.5, delay: 0.2 }}
+              >
+                <Button asChild size="lg" className="bg-gradient-primary-accent text-primary-foreground shadow-lg">
                   <Link href="/courses">
                     Browse Courses <ArrowRight className="ml-2 h-5 w-5" />
                   </Link>
@@ -31,18 +49,23 @@ export default function Home() {
                 <Button asChild size="lg" variant="outline" className="shadow-sm">
                   <Link href="/dashboard/instructor">Become an Instructor</Link>
                 </Button>
-              </div>
+              </motion.div>
             </div>
-            <div className="relative h-80 md:h-[450px]">
+            <motion.div 
+              className="relative h-80 md:h-[450px]"
+              initial={{ opacity: 0, scale: 0.9 }}
+              animate={{ opacity: 1, scale: 1 }}
+              transition={{ duration: 0.5 }}
+            >
               <Image
-                src="https://picsum.photos/seed/hero/800/600"
+                src="https://images.unsplash.com/photo-1516321497487-e288fb19713f?w=800&q=80"
                 alt="Happy students learning"
                 fill
                 priority
                 className="rounded-2xl shadow-2xl object-cover"
-                data-ai-hint="happy students"
+                data-ai-hint="happy students learning"
               />
-            </div>
+            </motion.div>
           </div>
         </section>
 
@@ -78,27 +101,45 @@ export default function Home() {
               </p>
             </div>
             <div className="grid md:grid-cols-3 gap-8 text-center">
-              <div className="flex flex-col items-center space-y-4 p-8 bg-card rounded-xl shadow-sm transition-all duration-300 hover:shadow-xl hover:-translate-y-2">
+              <motion.div 
+                className="flex flex-col items-center space-y-4 p-8 bg-card rounded-xl shadow-sm transition-all duration-300 hover:shadow-xl hover:-translate-y-2"
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.5 }}
+                viewport={{ once: true }}
+              >
                 <div className="bg-primary/10 p-3 rounded-full">
                     <BookOpen className="h-8 w-8 text-primary" />
                 </div>
                 <h3 className="text-xl font-bold">Expert-Led Courses</h3>
                 <p className="text-muted-foreground">Learn from industry professionals who are passionate about teaching.</p>
-              </div>
-              <div className="flex flex-col items-center space-y-4 p-8 bg-card rounded-xl shadow-sm transition-all duration-300 hover:shadow-xl hover:-translate-y-2">
+              </motion.div>
+              <motion.div 
+                className="flex flex-col items-center space-y-4 p-8 bg-card rounded-xl shadow-sm transition-all duration-300 hover:shadow-xl hover:-translate-y-2"
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.5, delay: 0.1 }}
+                viewport={{ once: true }}
+              >
                 <div className="bg-primary/10 p-3 rounded-full">
                     <Users className="h-8 w-8 text-primary" />
                 </div>
                 <h3 className="text-xl font-bold">Vibrant Community</h3>
                 <p className="text-muted-foreground">Connect with a community of learners and instructors.</p>
-              </div>
-              <div className="flex flex-col items-center space-y-4 p-8 bg-card rounded-xl shadow-sm transition-all duration-300 hover:shadow-xl hover:-translate-y-2">
+              </motion.div>
+              <motion.div 
+                className="flex flex-col items-center space-y-4 p-8 bg-card rounded-xl shadow-sm transition-all duration-300 hover:shadow-xl hover:-translate-y-2"
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.5, delay: 0.2 }}
+                viewport={{ once: true }}
+              >
                 <div className="bg-primary/10 p-3 rounded-full">
                     <Star className="h-8 w-8 text-primary" />
                 </div>
                 <h3 className="text-xl font-bold">Flexible Learning</h3>
                 <p className="text-muted-foreground">Learn at your own pace, anytime, anywhere.</p>
-              </div>
+              </motion.div>
             </div>
           </div>
         </section>

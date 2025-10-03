@@ -4,9 +4,9 @@ import Image from 'next/image';
 import { Building, Target, Users } from 'lucide-react';
 
 const teamMembers = [
-  { name: 'John Doe', role: 'CEO & Founder', avatar: 'https://picsum.photos/seed/team1/100/100' },
-  { name: 'Jane Smith', role: 'Head of Instruction', avatar: 'https://picsum.photos/seed/team2/100/100' },
-  { name: 'Peter Jones', role: 'Lead Developer', avatar: 'https://picsum.photos/seed/team3/100/100' },
+  { name: 'John Doe', role: 'CEO & Founder', avatar: 'https://images.unsplash.com/photo-1560250097-0b93528c311a?w=100&q=80' },
+  { name: 'Jane Smith', role: 'Head of Instruction', avatar: 'https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=100&q=80' },
+  { name: 'Peter Jones', role: 'Lead Developer', avatar: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=100&q=80' },
 ];
 
 export default function AboutPage() {
@@ -51,7 +51,7 @@ export default function AboutPage() {
           </div>
           <div className="relative h-80 rounded-2xl overflow-hidden shadow-lg">
              <Image
-                src="https://picsum.photos/seed/about-vision/800/600"
+                src="https://images.unsplash.com/photo-1522071820081-009f0129c71c?w=800&q=80"
                 alt="Team working together"
                 fill
                 className="object-cover"

@@ -11,17 +11,18 @@ import {
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Badge } from "@/components/ui/badge";
 import {
   CheckCircle,
   Clock,
   Film,
   Globe,
+  Play,
   Star,
   User,
   Users,
   Video,
 } from "lucide-react";
+import Link from "next/link";
 
 export default function CourseDetailPage({
   params,
@@ -161,7 +162,7 @@ export default function CourseDetailPage({
           {/* Sidebar */}
           <aside className="lg:col-span-1 relative">
             <Card className="sticky top-24">
-                <div className="relative">
+                <div className="relative group">
                     <Image
                         src={course.imageUrl}
                         alt={`Preview for ${course.title}`}
@@ -170,11 +171,11 @@ export default function CourseDetailPage({
                         className="rounded-t-lg object-cover w-full aspect-video"
                         data-ai-hint={course.imageHint}
                     />
-                    <div className="absolute inset-0 bg-black/40 flex items-center justify-center">
+                    <Link href="https://www.youtube.com/watch?v=dQw4w9WgXcQ" target="_blank" rel="noopener noreferrer" className="absolute inset-0 bg-black/40 flex items-center justify-center cursor-pointer opacity-0 group-hover:opacity-100 transition-opacity">
                         <Button variant="secondary" size="icon" className="h-16 w-16 rounded-full">
-                            <PlayIcon className="h-8 w-8 text-primary" />
+                            <Play className="h-8 w-8 text-primary" />
                         </Button>
-                    </div>
+                    </Link>
                 </div>
               <CardContent className="p-6 space-y-4">
                 <span className="text-3xl font-bold text-primary">${course.price}</span>
@@ -195,24 +196,5 @@ export default function CourseDetailPage({
         </div>
       </div>
     </div>
-  );
-}
-
-function PlayIcon(props: React.SVGProps<SVGSVGElement>) {
-  return (
-    <svg
-      {...props}
-      xmlns="http://www.w3.org/2000/svg"
-      width="24"
-      height="24"
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="2"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-    >
-      <polygon points="5 3 19 12 5 21 5 3" />
-    </svg>
   );
 }

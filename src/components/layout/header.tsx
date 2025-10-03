@@ -1,3 +1,5 @@
+"use client";
+
 import { Logo } from '@/components/shared/logo';
 import { Button } from '@/components/ui/button';
 import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet';
@@ -5,6 +7,8 @@ import { Menu, Search } from 'lucide-react';
 import Link from 'next/link';
 import { Input } from '../ui/input';
 import { ThemeToggle } from '../shared/theme-toggle';
+import { useRouter, useSearchParams } from 'next/navigation';
+import { useState, useEffect } from 'react';
 
 const navLinks = [
   { href: '/courses', label: 'Courses' },
@@ -13,6 +17,24 @@ const navLinks = [
 ];
 
 export function Header() {
+  const router = useRouter();
+  const searchParams = useSearchParams();
+  const [query, setQuery] = useState(searchParams.get('query') || '');
+
+  useEffect(() => {
+    // If the user navigates back/forward, update the search input
+    setQuery(searchParams.get('query') || '');
+  }, [searchParams]);
+
+  const handleSearch = (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    if (query) {
+      router.push(`/courses?query=${query}`);
+    } else {
+      router.push('/courses');
+    }
+  };
+
   return (
     <header className="sticky top-0 z-50 w-full border-b border-border/40 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
       <div className="container mx-auto flex h-16 items-center justify-between px-4 md:px-6">
@@ -32,10 +54,15 @@ export function Header() {
         </div>
 
         <div className="flex items-center gap-4">
-           <div className="relative hidden md:block">
+           <form onSubmit={handleSearch} className="relative hidden md:block">
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-            <Input placeholder="Search courses..." className="pl-10 w-64" />
-          </div>
+            <Input 
+              placeholder="Search courses..." 
+              className="pl-10 w-64"
+              value={query}
+              onChange={(e) => setQuery(e.target.value)}
+            />
+          </form>
           <ThemeToggle />
           <div className="hidden md:flex items-center gap-2">
             <Button variant="ghost">Log In</Button>

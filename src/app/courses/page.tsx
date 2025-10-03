@@ -18,7 +18,14 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { Slider } from "@/components/ui/slider";
 import { Button } from "@/components/ui/button";
 
-export default function CoursesPage() {
+export default function CoursesPage({ searchParams }: { searchParams?: { query?: string } }) {
+  const searchQuery = searchParams?.query || '';
+  const filteredCourses = courses.filter(course => 
+    course.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+    course.description.toLowerCase().includes(searchQuery.toLowerCase()) ||
+    course.category.toLowerCase().includes(searchQuery.toLowerCase())
+  );
+
   return (
     <div className="container mx-auto px-4 md:px-6 py-12">
       <header className="mb-12 text-center">
@@ -97,10 +104,22 @@ export default function CoursesPage() {
           </Card>
         </aside>
         <main className="md:col-span-3">
+          {searchQuery && (
+            <div className="mb-4">
+              <h2 className="text-xl font-semibold">
+                Showing results for "{searchQuery}"
+              </h2>
+              <p className="text-muted-foreground text-sm">{filteredCourses.length} courses found.</p>
+            </div>
+          )}
           <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
-            {courses.map((course) => (
-              <CourseCard key={course.id} course={course} />
-            ))}
+            {filteredCourses.length > 0 ? (
+              filteredCourses.map((course) => (
+                <CourseCard key={course.id} course={course} />
+              ))
+            ) : (
+              <p>No courses found for your search.</p>
+            )}
           </div>
         </main>
       </div>

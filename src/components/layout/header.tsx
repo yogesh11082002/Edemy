@@ -9,6 +9,9 @@ import { Input } from '../ui/input';
 import { ThemeToggle } from '../shared/theme-toggle';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useState, useEffect } from 'react';
+import { useAuth, useUser } from '@/firebase';
+import { Avatar, AvatarFallback, AvatarImage } from '../ui/avatar';
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from '../ui/dropdown-menu';
 
 const navLinks = [
   { href: '/courses', label: 'Courses' },
@@ -20,6 +23,8 @@ export function Header() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const [query, setQuery] = useState(searchParams.get('query') || '');
+  const { user, isUserLoading } = useUser();
+  const auth = useAuth();
 
   useEffect(() => {
     // If the user navigates back/forward, update the search input
@@ -34,6 +39,16 @@ export function Header() {
       router.push('/courses');
     }
   };
+
+  const handleSignOut = () => {
+    auth?.signOut();
+    router.push('/');
+  }
+
+  const getInitials = (name: string | null | undefined) => {
+    if (!name) return 'U';
+    return name.split(' ').map(n => n[0]).join('');
+  }
 
   return (
     <header className="sticky top-0 z-50 w-full border-b border-border/40 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
@@ -65,8 +80,38 @@ export function Header() {
           </form>
           <ThemeToggle />
           <div className="hidden md:flex items-center gap-2">
-            <Button variant="ghost">Log In</Button>
-            <Button className="bg-gradient-primary-accent text-primary-foreground shadow-md">Sign Up</Button>
+            {isUserLoading ? null : user ? (
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                   <Button variant="ghost" className="relative h-8 w-8 rounded-full">
+                    <Avatar className="h-9 w-9">
+                      <AvatarImage src={user.photoURL || ''} alt={user.displayName || 'User'} />
+                      <AvatarFallback>{getInitials(user.displayName)}</AvatarFallback>
+                    </Avatar>
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent className="w-56" align="end" forceMount>
+                  <DropdownMenuLabel className="font-normal">
+                    <div className="flex flex-col space-y-1">
+                      <p className="text-sm font-medium leading-none">{user.displayName}</p>
+                      <p className="text-xs leading-none text-muted-foreground">{user.email}</p>
+                    </div>
+                  </DropdownMenuLabel>
+                  <DropdownMenuSeparator />
+                  <DropdownMenuItem asChild>
+                    <Link href="/dashboard/profile">Profile</Link>
+                  </DropdownMenuItem>
+                  <DropdownMenuItem onClick={handleSignOut}>
+                    Sign Out
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
+            ) : (
+              <>
+                <Button variant="ghost" asChild><Link href="/login">Log In</Link></Button>
+                <Button asChild className="bg-gradient-primary-accent text-primary-foreground shadow-md"><Link href="/signup">Sign Up</Link></Button>
+              </>
+            )}
           </div>
           <Sheet>
             <SheetTrigger asChild>
@@ -90,8 +135,14 @@ export function Header() {
                   ))}
                 </nav>
                 <div className="flex flex-col gap-2 mt-4">
-                  <Button variant="ghost" size="lg">Log In</Button>
-                  <Button size="lg" className="bg-gradient-primary-accent text-primary-foreground shadow-md">Sign Up</Button>
+                  {user ? (
+                     <Button onClick={handleSignOut} size="lg">Sign Out</Button>
+                  ) : (
+                    <>
+                      <Button variant="ghost" size="lg" asChild><Link href="/login">Log In</Link></Button>
+                      <Button size="lg" asChild className="bg-gradient-primary-accent text-primary-foreground shadow-md"><Link href="/signup">Sign Up</Link></Button>
+                    </>
+                  )}
                 </div>
               </div>
             </SheetContent>

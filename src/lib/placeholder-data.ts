@@ -23,13 +23,22 @@ export const instructors: Instructor[] = [
     rating: 4.9,
     studentCount: 25000,
     courseCount: 8
+  },
+  {
+    id: 'inst-3',
+    name: 'Alex Johnson',
+    avatar: 'https://images.unsplash.com/photo-1539571696357-5a69c17a67c6?w=100&q=80',
+    bio: 'Data Scientist and AI enthusiast with a knack for making complex topics easy to understand. Believes in hands-on learning.',
+    rating: 4.9,
+    studentCount: 18000,
+    courseCount: 6
   }
 ];
 
 export const students: Student[] = [
   { id: 'stu-1', name: 'Alice', avatar: getImage('user-1').imageUrl },
   { id: 'stu-2', name: 'Bob', avatar: getImage('user-2').imageUrl },
-  { id: 'stu-3', name: 'Charlie', avatar: getImage('user-3').imageUrl },
+  { id: 'stu-3', name: 'Emily Rodriguez', avatar: getImage('user-3').imageUrl },
 ];
 
 export const courses: Course[] = [
@@ -160,6 +169,132 @@ export const courses: Course[] = [
         { title: 'Playing Your First Song', duration: '1h 15m' }
     ]
   },
+  {
+    id: '7',
+    title: 'Artificial Intelligence: Reinforcement Learning in Python',
+    description: 'Dive deep into the world of AI and learn how to build agents that learn from experience with this hands-on course in Reinforcement Learning.',
+    summary: 'Master AI with Python and Reinforcement Learning.',
+    instructor: instructors[2],
+    category: 'Programming',
+    level: 'Advanced',
+    price: 149.99,
+    rating: 4.9,
+    reviewCount: 950,
+    imageUrl: getImage('course-7').imageUrl,
+    imageHint: getImage('course-7').imageHint,
+    language: 'English',
+    duration: '50 hours',
+    lessons: [
+        { title: 'Intro to RL Concepts', duration: '1h 30m' },
+        { title: 'Q-Learning and Deep Q-Networks', duration: '3h' },
+        { title: 'Policy Gradients', duration: '3h' }
+    ]
+  },
+  {
+    id: '8',
+    title: 'The Complete Guide to Gourmet Cooking',
+    description: 'Learn the techniques of world-class chefs. From basic knife skills to advanced plating, this course has it all.',
+    summary: 'Become a gourmet chef in your own kitchen.',
+    instructor: instructors[0],
+    category: 'Lifestyle',
+    level: 'All Levels',
+    price: 69.99,
+    rating: 4.8,
+    reviewCount: 1100,
+    imageUrl: getImage('course-8').imageUrl,
+    imageHint: getImage('course-8').imageHint,
+    language: 'English',
+    duration: '15 hours',
+    lessons: [
+        { title: 'Mastering Knife Skills', duration: '1h' },
+        { title: 'The Art of Sauce Making', duration: '2h' },
+        { title: 'Plating and Presentation', duration: '1h 30m' }
+    ]
+  },
+  {
+    id: '9',
+    title: 'Acrylic Painting for Beginners',
+    description: 'Unleash your inner artist. This course will guide you through the basics of acrylic painting, from color theory to your first masterpiece.',
+    summary: 'Learn to paint with acrylics.',
+    instructor: instructors[1],
+    category: 'Art',
+    level: 'Beginner',
+    price: 39.99,
+    rating: 4.7,
+    reviewCount: 780,
+    imageUrl: getImage('course-9').imageUrl,
+    imageHint: getImage('course-9').imageHint,
+    language: 'English',
+    duration: '12 hours',
+    lessons: [
+        { title: 'Understanding Color Theory', duration: '1h' },
+        { title: 'Brush Techniques', duration: '1h 30m' },
+        { title: 'Your First Landscape', duration: '2h' }
+    ]
+  },
+  {
+    id: '10',
+    title: 'Creative Writing: Crafting Compelling Stories',
+    description: 'Learn the art of storytelling. This course covers plot development, character creation, and the secrets to writing a page-turner.',
+    summary: 'Write stories that captivate your readers.',
+    instructor: instructors[2],
+    category: 'Writing',
+    level: 'Intermediate',
+    price: 59.99,
+    rating: 4.9,
+    reviewCount: 1300,
+    imageUrl: getImage('course-10').imageUrl,
+    imageHint: getImage('course-10').imageHint,
+    language: 'English',
+    duration: '25 hours',
+    lessons: [
+        { title: 'The Elements of Plot', duration: '1h' },
+        { title: 'Creating Memorable Characters', duration: '1h 45m' },
+        { title: 'Dialogue and Pacing', duration: '2h' }
+    ]
+  },
+  {
+    id: '11',
+    title: 'Yoga for Flexibility and Strength',
+    description: 'Improve your physical and mental well-being with this comprehensive yoga course. Suitable for all fitness levels.',
+    summary: 'Increase flexibility and strength with yoga.',
+    instructor: instructors[1],
+    category: 'Health',
+    level: 'All Levels',
+    price: 49.99,
+    rating: 4.8,
+    reviewCount: 2100,
+    imageUrl: getImage('course-11').imageUrl,
+    imageHint: getImage('course-11').imageHint,
+    language: 'English',
+    duration: '20 hours',
+    lessons: [
+        { title: 'Foundation Poses', duration: '1h' },
+        { title: 'Vinyasa Flow Sequences', duration: '1h 30m' },
+        { title: 'Restorative Yoga', duration: '1h' }
+    ]
+  },
+  {
+    id: '12',
+    title: 'Investing for Beginners: The Stock Market',
+    description: 'Learn the fundamentals of investing in the stock market. Understand stocks, bonds, and ETFs to build your own portfolio.',
+    summary: 'Start your investing journey today.',
+    instructor: instructors[0],
+    category: 'Finance',
+    level: 'Beginner',
+    price: 89.99,
+    rating: 4.7,
+    reviewCount: 1600,
+    imageUrl: getImage('course-12').imageUrl,
+    imageHint: getImage('course-12').imageHint,
+    language: 'English',
+    duration: '18 hours',
+    lessons: [
+        { title: 'What is the Stock Market?', duration: '1h' },
+        { title: 'Analyzing a Company', duration: '2h' },
+        { title: 'Building Your First Portfolio', duration: '2h' }
+    ]
+  }
 ];
 
 export const reviews: Review[] = [

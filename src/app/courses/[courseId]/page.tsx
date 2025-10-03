@@ -182,8 +182,12 @@ export default function CourseDetailPage() {
               <CardContent className="p-6 space-y-4">
                 <span className="text-3xl font-bold text-primary">${course.price}</span>
                 <div className="flex gap-2">
-                    <Button size="lg" className="w-full bg-gradient-primary-accent text-primary-foreground">Enroll Now</Button>
-                    <Button size="lg" variant="outline" className="w-full">Add to Cart</Button>
+                    <Button asChild size="lg" className="w-full bg-gradient-primary-accent text-primary-foreground">
+                      <Link href="/cart">Enroll Now</Link>
+                    </Button>
+                    <Button asChild size="lg" variant="outline" className="w-full">
+                      <Link href="/cart">Add to Cart</Link>
+                    </Button>
                 </div>
                 <div className="space-y-3 text-sm pt-4">
                     <h4 className="font-semibold">This course includes:</h4>

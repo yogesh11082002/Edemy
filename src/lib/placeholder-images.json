@@ -21,7 +21,7 @@
     {
       "id": "course-4",
       "description": "A person meditating in a serene environment.",
-      "imageUrl": "https://images.unsplash.com/photo-1461468611824-46457c0e11fd?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw4fHxtZWRpdGF0aW9uJTIwbmF0dXJlfGVufDB8fHx8MTc1OTQ3Njk3M3ww&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageUrl": "https://images.unsplash.com/photo-1506126613408-4e0e0f7c50e1?w=800&q=80",
       "imageHint": "meditation nature"
     },
     {
@@ -38,32 +38,56 @@
     },
     {
       "id": "course-7",
-      "description": "Someone writing on a whiteboard with marketing funnels.",
-      "imageUrl": "https://images.unsplash.com/photo-1533750349088-cd871a92f312?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwxfHxtYXJrZXRpbmclMjBzdHJhdGVneXxlbnwwfHx8fDE3NTk0Mjc3MDF8MA&ixlib=rb-4.1.0&q=80&w=1080",
-      "imageHint": "marketing strategy"
+      "description": "An AI robot illustration.",
+      "imageUrl": "https://images.unsplash.com/photo-1555965027-3a4a68425bee?w=800&q=80",
+      "imageHint": "AI robot"
     },
     {
       "id": "course-8",
-      "description": "A close-up of a person's hands typing on a laptop.",
-      "imageUrl": "https://images.unsplash.com/photo-1647154929394-1aef4d881743?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw3fHx0eXBpbmclMjBsYXB0b3B8ZW58MHx8fHwxNzU5NDA1NjQxfDA&ixlib=rb-4.1.0&q=80&w=1080",
-      "imageHint": "typing laptop"
+      "description": "A person cooking a gourmet meal.",
+      "imageUrl": "https://images.unsplash.com/photo-1466637574441-749b8f19452f?w=800&q=80",
+      "imageHint": "gourmet cooking"
+    },
+    {
+      "id": "course-9",
+      "description": "A person painting on a canvas.",
+      "imageUrl": "https://images.unsplash.com/photo-1537884557178-342a575d7d16?w=800&q=80",
+      "imageHint": "painting canvas"
+    },
+    {
+      "id": "course-10",
+      "description": "A person writing in a journal.",
+      "imageUrl": "https://images.unsplash.com/photo-1513279922550-250c212de436?w=800&q=80",
+      "imageHint": "creative writing"
+    },
+    {
+      "id": "course-11",
+      "description": "A person doing yoga.",
+      "imageUrl": "https://images.unsplash.com/photo-1544367567-0f2fcb009e0b?w=800&q=80",
+      "imageHint": "yoga pose"
+    },
+    {
+      "id": "course-12",
+      "description": "Stock market data on a screen.",
+      "imageUrl": "https://images.unsplash.com/photo-1611974789855-9c2a0a7236a3?w=800&q=80",
+      "imageHint": "stock market"
     },
     {
       "id": "user-1",
       "description": "Avatar of Sarah Lee.",
-      "imageUrl": "https://images.unsplash.com/photo-1557053908-4793c484d06f?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwzfHx3b21hbiUyMHBvcnRyYWl0fGVufDB8fHx8MTc1OTM5NjU1MXww&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageUrl": "https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=100&q=80",
       "imageHint": "woman portrait"
     },
     {
       "id": "user-2",
       "description": "Avatar of David Chen.",
-      "imageUrl": "https://images.unsplash.com/photo-1624395213043-fa2e123b2656?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw3fHxtYW4lMjBwb3J0cmFpdHxlbnwwfHx8fDE3NTk0NzE4Mzd8MA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageUrl": "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=100&q=80",
       "imageHint": "man portrait"
     },
     {
       "id": "user-3",
       "description": "Avatar of Emily Rodriguez.",
-      "imageUrl": "https://images.unsplash.com/photo-1656338997878-279d71d48f6e?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw5fHxwZXJzb24lMjBzbWlsaW5nfGVufDB8fHx8MTc1OTQxNTUyM3ww&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageUrl": "https://images.unsplash.com/photo-1580489944761-15a19d654956?w=100&q=80",
       "imageHint": "person smiling"
     }
   ]

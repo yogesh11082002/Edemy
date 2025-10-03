@@ -1,4 +1,9 @@
 import type { Course, Instructor, Review, Student, Testimonial } from './types';
+import { PlaceHolderImages } from './placeholder-images';
+
+const getImage = (id: string) => {
+    return PlaceHolderImages.find(img => img.id === id) || { imageUrl: '', imageHint: 'placeholder' };
+}
 
 export const instructors: Instructor[] = [
   {
@@ -22,9 +27,9 @@ export const instructors: Instructor[] = [
 ];
 
 export const students: Student[] = [
-  { id: 'stu-1', name: 'Alice', avatar: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=100&q=80' },
-  { id: 'stu-2', name: 'Bob', avatar: 'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=100&q=80' },
-  { id: 'stu-3', name: 'Charlie', avatar: 'https://images.unsplash.com/photo-1527982988734-e4c1c04f0391?w=100&q=80' },
+  { id: 'stu-1', name: 'Alice', avatar: getImage('user-1').imageUrl },
+  { id: 'stu-2', name: 'Bob', avatar: getImage('user-2').imageUrl },
+  { id: 'stu-3', name: 'Charlie', avatar: getImage('user-3').imageUrl },
 ];
 
 export const courses: Course[] = [
@@ -39,8 +44,8 @@ export const courses: Course[] = [
     price: 84.99,
     rating: 4.7,
     reviewCount: 1258,
-    imageUrl: 'https://images.unsplash.com/photo-1461749280684-dccba630e2f6?w=600&q=80',
-    imageHint: 'programming code',
+    imageUrl: getImage('course-1').imageUrl,
+    imageHint: getImage('course-1').imageHint,
     language: 'English',
     duration: '62 hours',
     enrolledStudents: 2500,
@@ -61,8 +66,8 @@ export const courses: Course[] = [
     price: 49.99,
     rating: 4.9,
     reviewCount: 3201,
-    imageUrl: 'https://images.unsplash.com/photo-1581291518857-4e27b48ff24e?w=600&q=80',
-    imageHint: 'design desk',
+    imageUrl: getImage('course-2').imageUrl,
+    imageHint: getImage('course-2').imageHint,
     language: 'English',
     duration: '35.5 hours',
     lessons: [
@@ -82,8 +87,8 @@ export const courses: Course[] = [
     price: 129.99,
     rating: 4.6,
     reviewCount: 890,
-    imageUrl: 'https://images.unsplash.com/photo-1460925895917-afdab827c52f?w=600&q=80',
-    imageHint: 'business meeting',
+    imageUrl: getImage('course-3').imageUrl,
+    imageHint: getImage('course-3').imageHint,
     language: 'English',
     duration: '40.5 hours',
     lessons: [
@@ -103,8 +108,8 @@ export const courses: Course[] = [
     price: 29.99,
     rating: 4.8,
     reviewCount: 1543,
-    imageUrl: 'https://images.unsplash.com/photo-1506126613408-4e7e9b7d5d9a?w=600&q=80',
-    imageHint: 'meditation nature',
+    imageUrl: getImage('course-4').imageUrl,
+    imageHint: getImage('course-4').imageHint,
     language: 'English',
     duration: '10 hours',
     lessons: [
@@ -124,8 +129,8 @@ export const courses: Course[] = [
     price: 99.99,
     rating: 4.8,
     reviewCount: 2200,
-    imageUrl: 'https://images.unsplash.com/photo-1554080353-a576cf803bda?w=600&q=80',
-    imageHint: 'camera tripod',
+    imageUrl: getImage('course-5').imageUrl,
+    imageHint: getImage('course-5').imageHint,
     language: 'English',
     duration: '22 hours',
     lessons: [
@@ -145,8 +150,8 @@ export const courses: Course[] = [
     price: 79.99,
     rating: 4.7,
     reviewCount: 1800,
-    imageUrl: 'https://images.unsplash.com/photo-1510915361894-db8b60106cb1?w=600&q=80',
-    imageHint: 'playing guitar',
+    imageUrl: getImage('course-6').imageUrl,
+    imageHint: getImage('course-6').imageHint,
     language: 'English',
     duration: '30 hours',
     lessons: [
@@ -164,9 +169,9 @@ export const reviews: Review[] = [
 ];
 
 export const testimonials: Testimonial[] = [
-  { id: 'test-1', name: 'Sarah Lee', role: 'Web Developer', avatar: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=100&q=80', quote: 'Edemy has been a game-changer for my career. The courses are top-notch and the instructors are industry experts. I was able to land a better job after completing the Web Development Bootcamp.'},
-  { id: 'test-2', name: 'David Chen', role: 'UX Designer', avatar: 'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=100&q=80', quote: 'The flexibility to learn at my own pace was exactly what I needed. The community forums are also a great place to get help and connect with other learners. Highly recommended!'},
-  { id: 'test-3', name: 'Emily Rodriguez', role: 'Marketing Manager', avatar: 'https://images.unsplash.com/photo-1527982988734-e4c1c04f0391?w=100&q=80', quote: 'I\'ve taken several business courses on Edemy and they\'ve all exceeded my expectations. The content is practical, relevant, and has helped me grow my business significantly.'}
+  { id: 'test-1', name: 'Sarah Lee', role: 'Web Developer', avatar: getImage('user-1').imageUrl, quote: 'Edemy has been a game-changer for my career. The courses are top-notch and the instructors are industry experts. I was able to land a better job after completing the Web Development Bootcamp.'},
+  { id: 'test-2', name: 'David Chen', role: 'UX Designer', avatar: getImage('user-2').imageUrl, quote: 'The flexibility to learn at my own pace was exactly what I needed. The community forums are also a great place to get help and connect with other learners. Highly recommended!'},
+  { id: 'test-3', name: 'Emily Rodriguez', role: 'Marketing Manager', avatar: getImage('user-3').imageUrl, quote: 'I\'ve taken several business courses on Edemy and they\'ve all exceeded my expectations. The content is practical, relevant, and has helped me grow my business significantly.'}
 ]
 
 export const categories = [...new Set(courses.map(course => course.category))];

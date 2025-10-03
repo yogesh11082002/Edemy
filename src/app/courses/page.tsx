@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useMemo } from 'react';
+import { useSearchParams } from 'next/navigation';
 import { CourseCard } from "@/components/courses/course-card";
 import { courses, categories, levels, languages } from "@/lib/placeholder-data";
 import {
@@ -21,8 +22,9 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { Slider } from "@/components/ui/slider";
 import { Button } from "@/components/ui/button";
 
-export default function CoursesPage({ searchParams }: { searchParams?: { query?: string } }) {
-  const searchQuery = searchParams?.query || '';
+export default function CoursesPage() {
+  const searchParams = useSearchParams();
+  const searchQuery = searchParams.get('query') || '';
   
   const [selectedCategory, setSelectedCategory] = useState('all');
   const [selectedLevels, setSelectedLevels] = useState<string[]>([]);

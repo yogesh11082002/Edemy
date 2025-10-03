@@ -20,9 +20,9 @@
     },
     {
       "id": "course-4",
-      "description": "A person meditating in a serene environment.",
+      "description": "A person meditating outdoors.",
       "imageUrl": "https://images.unsplash.com/photo-1506126613408-4e0e0f7c50e1?w=800&q=80",
-      "imageHint": "meditation nature"
+      "imageHint": "meditation outdoors"
     },
     {
       "id": "course-5",
@@ -38,9 +38,9 @@
     },
     {
       "id": "course-7",
-      "description": "An AI robot illustration.",
-      "imageUrl": "https://images.unsplash.com/photo-1555965027-3a4a68425bee?w=800&q=80",
-      "imageHint": "AI robot"
+      "description": "An abstract visualization of a neural network.",
+      "imageUrl": "https://images.unsplash.com/photo-1535223289827-42f1e9919769?w=800&q=80",
+      "imageHint": "AI neural"
     },
     {
       "id": "course-8",
@@ -56,9 +56,9 @@
     },
     {
       "id": "course-10",
-      "description": "A person writing in a journal.",
-      "imageUrl": "https://images.unsplash.com/photo-1513279922550-250c212de436?w=800&q=80",
-      "imageHint": "creative writing"
+      "description": "An open book with a pen on it.",
+      "imageUrl": "https://images.unsplash.com/photo-1455390582262-044cdead277a?w=800&q=80",
+      "imageHint": "writing book"
     },
     {
       "id": "course-11",

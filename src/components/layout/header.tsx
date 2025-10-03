@@ -13,16 +13,16 @@ const navLinks = [
 
 export function Header() {
   return (
-    <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
+    <header className="sticky top-0 z-50 w-full border-b border-border/40 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
       <div className="container mx-auto flex h-16 items-center justify-between px-4 md:px-6">
-        <div className="flex items-center gap-6">
+        <div className="flex items-center gap-8">
           <Logo />
           <nav className="hidden md:flex items-center gap-6 text-sm font-medium">
             {navLinks.map((link) => (
               <Link
                 key={link.href}
                 href={link.href}
-                className="text-muted-foreground transition-colors hover:text-foreground"
+                className="text-foreground/60 transition-colors hover:text-foreground"
               >
                 {link.label}
               </Link>
@@ -37,7 +37,7 @@ export function Header() {
           </div>
           <div className="hidden md:flex items-center gap-2">
             <Button variant="ghost">Log In</Button>
-            <Button className="bg-gradient-primary-accent text-primary-foreground">Sign Up</Button>
+            <Button className="bg-gradient-primary-accent text-primary-foreground shadow-md">Sign Up</Button>
           </div>
           <Sheet>
             <SheetTrigger asChild>
@@ -54,15 +54,15 @@ export function Header() {
                     <Link
                       key={link.href}
                       href={link.href}
-                      className="text-lg font-medium text-muted-foreground transition-colors hover:text-foreground"
+                      className="text-lg font-medium text-foreground/70 transition-colors hover:text-foreground"
                     >
                       {link.label}
                     </Link>
                   ))}
                 </nav>
-                <div className="flex flex-col gap-2">
+                <div className="flex flex-col gap-2 mt-4">
                   <Button variant="ghost" size="lg">Log In</Button>
-                  <Button size="lg" className="bg-gradient-primary-accent text-primary-foreground">Sign Up</Button>
+                  <Button size="lg" className="bg-gradient-primary-accent text-primary-foreground shadow-md">Sign Up</Button>
                 </div>
               </div>
             </SheetContent>

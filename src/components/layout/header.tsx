@@ -74,7 +74,7 @@ export function Header() {
               placeholder="Search courses..." 
               className="pl-10 w-64"
               value={query}
-              onChange={(e) => setQuery(e.targe.value)}
+              onChange={(e) => setQuery(e.target.value)}
             />
           </form>
           <ThemeToggle />

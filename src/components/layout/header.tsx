@@ -15,8 +15,7 @@ import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel,
 
 const navLinks = [
   { href: '/courses', label: 'Courses' },
-  { href: '/dashboard/instructor', label: 'Instructor' },
-  { href: '/dashboard/student', label: 'Student' },
+  { href: '/dashboard', label: 'Dashboard' },
 ];
 
 export function Header() {
@@ -75,7 +74,7 @@ export function Header() {
               placeholder="Search courses..." 
               className="pl-10 w-64"
               value={query}
-              onChange={(e) => setQuery(e.target.value)}
+              onChange={(e) => setQuery(e.targe.value)}
             />
           </form>
           <ThemeToggle />

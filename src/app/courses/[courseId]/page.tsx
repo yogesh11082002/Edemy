@@ -43,22 +43,8 @@ export default function CourseDetailPage() {
     setCourse(foundCourse);
   }, [params.courseId]);
 
-  if (!course) {
-    // Show a loading state or return null until the course is found
-    // Or you can handle notFound() inside useEffect if the course is definitively not there
-    // For now, we'll return a loading indicator.
-    return (
-      <div className="container mx-auto px-4 md:px-6 py-12 text-center">
-        Loading...
-      </div>
-    );
-  }
-
-  if (course === undefined) {
-    notFound();
-  }
-
-  const handleAddToCart = () => {
+    const handleAddToCart = () => {
+    if (!course) return;
     const storedCart = localStorage.getItem('edemy-cart');
     let cartIds = storedCart ? JSON.parse(storedCart) : [];
     if (!cartIds.includes(course.id)) {
@@ -71,6 +57,14 @@ export default function CourseDetailPage() {
   const handleEnrollNow = () => {
     handleAddToCart();
   };
+
+  if (!course) {
+    return (
+      <div className="container mx-auto px-4 md:px-6 py-12 text-center">
+        Loading...
+      </div>
+    );
+  }
 
   const courseReviews = reviews.slice(0, 2);
 
@@ -86,7 +80,7 @@ export default function CourseDetailPage() {
             <p className="mt-2 text-lg text-primary-foreground/80">
               {course.summary}
             </p>
-            <div className="flex items-center gap-4 mt-4 text-sm">
+            <div className="flex flex-wrap items-center gap-x-4 gap-y-2 mt-4 text-sm">
               <div className="flex items-center gap-2">
                 <StarRating rating={course.rating} />
                 <span>
@@ -97,9 +91,9 @@ export default function CourseDetailPage() {
             </div>
             <div className="flex items-center gap-2 mt-2 text-sm">
               <span>Created by</span>
-              <span className="font-semibold underline">
+              <Link href="#" className="font-semibold underline">
                 {course.instructor.name}
-              </span>
+              </Link>
             </div>
           </div>
         </div>
@@ -107,6 +101,75 @@ export default function CourseDetailPage() {
 
       <div className="container mx-auto px-4 md:px-6 py-12">
         <div className="grid lg:grid-cols-3 lg:gap-12">
+          {/* Sidebar (moved up for mobile) */}
+          <aside className="lg:hidden mb-8">
+            <Card>
+              <div className="relative group">
+                <Image
+                  src={course.imageUrl}
+                  alt={`Preview for ${course.title}`}
+                  width={600}
+                  height={338}
+                  className="rounded-t-lg object-cover w-full aspect-video"
+                  data-ai-hint={course.imageHint}
+                />
+                <div
+                  onClick={() => setShowVideo(true)}
+                  className="absolute inset-0 bg-black/40 flex items-center justify-center cursor-pointer opacity-0 group-hover:opacity-100 transition-opacity"
+                >
+                  <Button
+                    variant="secondary"
+                    size="icon"
+                    className="h-16 w-16 rounded-full"
+                  >
+                    <Play className="h-8 w-8 text-primary" />
+                  </Button>
+                </div>
+              </div>
+              <CardContent className="p-6 space-y-4">
+                <span className="text-3xl font-bold text-primary">
+                  ${course.price}
+                </span>
+                <div className="flex flex-col gap-2">
+                  <Button
+                    size="lg"
+                    className="w-full bg-gradient-primary-accent text-primary-foreground"
+                    onClick={handleEnrollNow}
+                  >
+                    Enroll Now
+                  </Button>
+                  <Button
+                    size="lg"
+                    variant="outline"
+                    className="w-full"
+                    onClick={handleAddToCart}
+                  >
+                    Add to Cart
+                  </Button>
+                </div>
+                <div className="space-y-3 text-sm pt-4">
+                  <h4 className="font-semibold">This course includes:</h4>
+                  <div className="flex items-center gap-2">
+                    <Clock className="h-4 w-4 text-muted-foreground" />{' '}
+                    {course.duration} on-demand video
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <Globe className="h-4 w-4 text-muted-foreground" />{' '}
+                    Certificate of completion
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <User className="h-4 w-4 text-muted-foreground" /> Taught in{' '}
+                    {course.language}
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <CheckCircle className="h-4 w-4 text-muted-foreground" />{' '}
+                    {course.level} level
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+          </aside>
+
           {/* Main Content */}
           <div className="lg:col-span-2 space-y-8">
             <Card>
@@ -131,8 +194,8 @@ export default function CourseDetailPage() {
                   {course.lessons.map((lesson, index) => (
                     <AccordionItem value={`item-${index}`} key={index}>
                       <AccordionTrigger>
-                        <div className="flex items-center gap-3">
-                          <Film className="h-5 w-5 text-primary" />
+                        <div className="flex items-center gap-3 text-left">
+                          <Film className="h-5 w-5 text-primary flex-shrink-0" />
                           <span>{lesson.title}</span>
                         </div>
                       </AccordionTrigger>
@@ -167,7 +230,7 @@ export default function CourseDetailPage() {
                 </CardTitle>
               </CardHeader>
               <CardContent className="space-y-4">
-                <div className="flex items-center gap-4">
+                <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4">
                   <Avatar className="h-20 w-20">
                     <AvatarImage
                       src={course.instructor.avatar}
@@ -181,7 +244,7 @@ export default function CourseDetailPage() {
                     <h3 className="font-bold text-lg">
                       {course.instructor.name}
                     </h3>
-                    <div className="flex items-center gap-4 text-sm text-muted-foreground mt-1">
+                    <div className="flex flex-wrap items-center gap-x-4 gap-y-1 text-sm text-muted-foreground mt-1">
                       <div className="flex items-center gap-1">
                         <Star className="h-4 w-4 text-amber-500" />{' '}
                         {course.instructor.rating} Rating
@@ -240,8 +303,8 @@ export default function CourseDetailPage() {
             </Card>
           </div>
 
-          {/* Sidebar */}
-          <aside className="lg:col-span-1 relative">
+          {/* Sidebar (desktop) */}
+          <aside className="lg:col-span-1 relative hidden lg:block">
             <Card className="sticky top-24">
               <div className="relative group">
                 <Image
@@ -269,7 +332,7 @@ export default function CourseDetailPage() {
                 <span className="text-3xl font-bold text-primary">
                   ${course.price}
                 </span>
-                <div className="flex gap-2">
+                <div className="flex flex-col sm:flex-row gap-2">
                   <Button
                     size="lg"
                     className="w-full bg-gradient-primary-accent text-primary-foreground"
@@ -316,7 +379,7 @@ export default function CourseDetailPage() {
           onClick={() => setShowVideo(false)}
         >
           <div
-            className="relative w-full max-w-4xl"
+            className="relative w-full max-w-4xl mx-4"
             onClick={(e) => e.stopPropagation()}
           >
             <button

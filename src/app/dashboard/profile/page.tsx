@@ -21,6 +21,7 @@ export default function ProfilePage() {
   const router = useRouter();
   const { toast } = useToast();
   const [displayName, setDisplayName] = useState('');
+  const [photoURL, setPhotoURL] = useState('');
 
   useEffect(() => {
     if (!isUserLoading && !user) {
@@ -28,6 +29,7 @@ export default function ProfilePage() {
     }
     if (user) {
         setDisplayName(user.displayName || '');
+        setPhotoURL(user.photoURL || '');
     }
   }, [user, isUserLoading, router]);
 
@@ -42,10 +44,10 @@ export default function ProfilePage() {
     e.preventDefault();
     if (user) {
         try {
-            await updateProfile(user, { displayName });
+            await updateProfile(user, { displayName, photoURL });
             toast({
                 title: "Profile Updated",
-                description: "Your display name has been updated.",
+                description: "Your profile has been successfully updated.",
             });
         } catch (error: any) {
              toast({
@@ -71,22 +73,22 @@ export default function ProfilePage() {
   return (
     <div className="max-w-4xl mx-auto">
         <Tabs defaultValue="profile" className="w-full">
-            <TabsList className="grid w-full grid-cols-3 mb-8">
-                <TabsTrigger value="profile">Profile Overview</TabsTrigger>
+            <TabsList className="grid w-full grid-cols-2 md:grid-cols-3 mb-8">
+                <TabsTrigger value="profile">Profile</TabsTrigger>
                 <TabsTrigger value="courses">My Courses</TabsTrigger>
-                <TabsTrigger value="settings">Account Settings</TabsTrigger>
+                <TabsTrigger value="settings">Settings</TabsTrigger>
             </TabsList>
             <TabsContent value="profile">
                  <Card>
                     <CardHeader>
-                    <div className='flex items-center gap-6'>
+                    <div className='flex flex-col md:flex-row items-center gap-6'>
                         <Avatar className="h-24 w-24">
-                        <AvatarImage src={user.photoURL || ''} alt={user.displayName || ''} />
-                        <AvatarFallback className="text-3xl">{getInitials(user.displayName)}</AvatarFallback>
+                        <AvatarImage src={photoURL || user.photoURL || ''} alt={displayName || ''} />
+                        <AvatarFallback className="text-3xl">{getInitials(displayName)}</AvatarFallback>
                         </Avatar>
                         <div>
-                            <CardTitle className="text-3xl">{user.displayName}</CardTitle>
-                            <CardDescription className="text-lg">{user.email}</CardDescription>
+                            <CardTitle className="text-3xl text-center md:text-left">{displayName}</CardTitle>
+                            <CardDescription className="text-lg text-center md:text-left">{user.email}</CardDescription>
                         </div>
                     </div>
                     </CardHeader>
@@ -106,7 +108,7 @@ export default function ProfilePage() {
                         <CardTitle>My Enrolled Courses</CardTitle>
                         <CardDescription>Continue your learning journey.</CardDescription>
                     </CardHeader>
-                    <CardContent className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+                    <CardContent className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
                         {enrolledCourses.map((course) => (
                             <EnrolledCourseCard key={course.id} course={course} progress={Math.floor(Math.random() * 80) + 10} />
                         ))}
@@ -127,6 +129,14 @@ export default function ProfilePage() {
                                     id="displayName" 
                                     value={displayName} 
                                     onChange={(e) => setDisplayName(e.target.value)}
+                                />
+                            </div>
+                            <div className="space-y-2">
+                                <Label htmlFor="photoURL">Photo URL</Label>
+                                <Input 
+                                    id="photoURL" 
+                                    value={photoURL} 
+                                    onChange={(e) => setPhotoURL(e.target.value)}
                                 />
                             </div>
                              <div className="space-y-2">

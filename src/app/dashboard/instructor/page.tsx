@@ -2,10 +2,12 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { courses } from '@/lib/placeholder-data';
-import { DollarSign, PlusCircle, Star, Users } from 'lucide-react';
+import { DollarSign, PlusCircle, Star, Users, MoreHorizontal } from 'lucide-react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { Badge } from '@/components/ui/badge';
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
+
 
 export default function InstructorDashboardPage() {
     const instructorCourses = courses.slice(0, 4);
@@ -13,7 +15,7 @@ export default function InstructorDashboardPage() {
   return (
     <div className="space-y-8">
       {/* Stats Section */}
-      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+      <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">Total Revenue</CardTitle>
@@ -71,9 +73,9 @@ export default function InstructorDashboardPage() {
                   <span className="sr-only">Image</span>
                 </TableHead>
                 <TableHead>Title</TableHead>
-                <TableHead>Status</TableHead>
-                <TableHead className="hidden md:table-cell">Price</TableHead>
-                <TableHead className="hidden md:table-cell">
+                <TableHead className="hidden md:table-cell">Status</TableHead>
+                <TableHead className="hidden lg:table-cell">Price</TableHead>
+                <TableHead className="hidden xl:table-cell">
                   Students
                 </TableHead>
                 <TableHead>
@@ -95,17 +97,34 @@ export default function InstructorDashboardPage() {
                     />
                   </TableCell>
                   <TableCell className="font-medium">{course.title}</TableCell>
-                  <TableCell>
+                   <TableCell className="hidden md:table-cell">
                     <Badge variant="outline">Published</Badge>
                   </TableCell>
-                  <TableCell className="hidden md:table-cell">
+                  <TableCell className="hidden lg:table-cell">
                     ${course.price}
                   </TableCell>
-                  <TableCell className="hidden md:table-cell">
+                  <TableCell className="hidden xl:table-cell">
                     {course.enrolledStudents?.toLocaleString()}
                   </TableCell>
                   <TableCell>
-                     <Button variant="ghost" size="sm">Edit</Button>
+                     <DropdownMenu>
+                      <DropdownMenuTrigger asChild>
+                        <Button
+                          aria-haspopup="true"
+                          size="icon"
+                          variant="ghost"
+                        >
+                          <MoreHorizontal className="h-4 w-4" />
+                          <span className="sr-only">Toggle menu</span>
+                        </Button>
+                      </DropdownMenuTrigger>
+                      <DropdownMenuContent align="end">
+                        <DropdownMenuLabel>Actions</DropdownMenuLabel>
+                        <DropdownMenuItem>Edit</DropdownMenuItem>
+                        <DropdownMenuItem>View Analytics</DropdownMenuItem>
+                         <DropdownMenuItem className="text-destructive">Delete</DropdownMenuItem>
+                      </DropdownMenuContent>
+                    </DropdownMenu>
                   </TableCell>
                 </TableRow>
               ))}

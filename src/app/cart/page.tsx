@@ -78,16 +78,16 @@ export default function CartPage() {
         </h1>
       </header>
       {cartItems.length > 0 ? (
-        <div className="grid md:grid-cols-3 gap-12">
-          <div className="md:col-span-2">
+        <div className="grid lg:grid-cols-3 gap-8 lg:gap-12">
+          <div className="lg:col-span-2">
             <h2 className="text-2xl font-semibold mb-6">
               {cartItems.length} Course{cartItems.length > 1 ? 's' : ''} in
               Cart
             </h2>
             <div className="space-y-6">
               {cartItems.map((course) => (
-                <Card key={course.id} className="flex items-start gap-4 p-4">
-                  <div className="relative h-24 w-40 flex-shrink-0 rounded-md overflow-hidden">
+                <Card key={course.id} className="flex flex-col sm:flex-row items-start gap-4 p-4">
+                  <div className="relative h-32 w-full sm:w-40 flex-shrink-0 rounded-md overflow-hidden">
                     <Image
                       src={course.imageUrl}
                       alt={course.title}
@@ -96,11 +96,11 @@ export default function CartPage() {
                       data-ai-hint={course.imageHint}
                     />
                   </div>
-                  <div className="flex-grow">
+                  <div className="flex-grow w-full">
                     <h3 className="font-bold font-headline text-lg">
                       {course.title}
                     </h3>
-                    <p className="text-sm text-muted-foreground">
+                    <p className="text-sm text-muted-foreground mt-1">
                       By {course.instructor.name}
                     </p>
                     <div className="flex items-center gap-2 mt-2 text-sm">
@@ -113,7 +113,7 @@ export default function CartPage() {
                       </span>
                     </div>
                   </div>
-                  <div className="flex flex-col items-end gap-2">
+                  <div className="flex flex-row sm:flex-col items-center sm:items-end justify-between w-full mt-4 sm:mt-0 sm:w-auto">
                     <span className="text-lg font-bold text-primary">
                       ${course.price}
                     </span>
@@ -124,13 +124,14 @@ export default function CartPage() {
                       className="text-muted-foreground hover:text-destructive"
                     >
                       <Trash2 className="h-5 w-5" />
+                       <span className="sr-only">Remove item</span>
                     </Button>
                   </div>
                 </Card>
               ))}
             </div>
           </div>
-          <div className="md:col-span-1">
+          <div className="lg:col-span-1">
             <Card className="sticky top-24">
               <CardHeader>
                 <CardTitle className="text-2xl font-headline">

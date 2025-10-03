@@ -10,7 +10,6 @@ import {
   CardTitle,
 } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
 import Link from 'next/link';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -54,6 +53,15 @@ export default function SignupPage() {
 
   async function onSubmit(values: z.infer<typeof formSchema>) {
     setIsLoading(true);
+    if (!auth) {
+        toast({
+            variant: 'destructive',
+            title: 'Signup Failed',
+            description: 'Authentication service is not available.',
+        });
+        setIsLoading(false);
+        return;
+    }
     try {
       const userCredential = await createUserWithEmailAndPassword(
         auth,
@@ -82,7 +90,7 @@ export default function SignupPage() {
   }
 
   return (
-    <div className="flex min-h-[calc(100vh-theme(spacing.16))] items-center justify-center bg-secondary/50 p-4">
+    <div className="flex min-h-[calc(100vh-theme(spacing.16))] items-center justify-center bg-secondary/50 p-4 md:p-6">
       <Card className="w-full max-w-md">
         <CardHeader className="text-center">
           <CardTitle className="text-2xl font-bold">Create an Account</CardTitle>

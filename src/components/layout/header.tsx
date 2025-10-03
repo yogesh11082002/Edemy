@@ -2,7 +2,7 @@
 
 import { Logo } from '@/components/shared/logo';
 import { Button } from '@/components/ui/button';
-import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet';
+import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger, SheetDescription } from '@/components/ui/sheet';
 import { Menu, Search } from 'lucide-react';
 import Link from 'next/link';
 import { Input } from '../ui/input';
@@ -24,6 +24,7 @@ export function Header() {
   const [query, setQuery] = useState(searchParams.get('query') || '');
   const { user, isUserLoading } = useUser();
   const auth = useAuth();
+  const [open, setOpen] = useState(false);
 
   useEffect(() => {
     // If the user navigates back/forward, update the search input
@@ -112,7 +113,7 @@ export function Header() {
               </>
             )}
           </div>
-          <Sheet>
+          <Sheet open={open} onOpenChange={setOpen}>
             <SheetTrigger asChild>
               <Button variant="outline" size="icon" className="md:hidden">
                 <Menu className="h-6 w-6" />
@@ -120,6 +121,12 @@ export function Header() {
               </Button>
             </SheetTrigger>
             <SheetContent side="left">
+               <SheetHeader className="sr-only">
+                <SheetTitle>Mobile Menu</SheetTitle>
+                <SheetDescription>
+                  A list of navigation links and user actions for mobile view.
+                </SheetDescription>
+              </SheetHeader>
               <div className="flex flex-col gap-6 p-6">
                 <Logo />
                 <nav className="grid gap-4">
@@ -127,6 +134,7 @@ export function Header() {
                     <Link
                       key={link.href}
                       href={link.href}
+                      onClick={() => setOpen(false)}
                       className="text-lg font-medium text-foreground/70 transition-colors hover:text-foreground"
                     >
                       {link.label}
@@ -135,11 +143,11 @@ export function Header() {
                 </nav>
                 <div className="flex flex-col gap-2 mt-4">
                   {user ? (
-                     <Button onClick={handleSignOut} size="lg">Sign Out</Button>
+                     <Button onClick={() => { handleSignOut(); setOpen(false); }} size="lg">Sign Out</Button>
                   ) : (
                     <>
-                      <Button variant="ghost" size="lg" asChild><Link href="/login">Log In</Link></Button>
-                      <Button size="lg" asChild className="bg-gradient-primary-accent text-primary-foreground shadow-md"><Link href="/signup">Sign Up</Link></Button>
+                      <Button variant="ghost" size="lg" asChild><Link href="/login" onClick={() => setOpen(false)}>Log In</Link></Button>
+                      <Button size="lg" asChild className="bg-gradient-primary-accent text-primary-foreground shadow-md"><Link href="/signup" onClick={() => setOpen(false)}>Sign Up</Link></Button>
                     </>
                   )}
                 </div>

@@ -1,65 +1,72 @@
 /**
  * @fileoverview Firestore Security Rules for LearnVerse LMS.
  *
- * Core Philosophy:
- * This ruleset enforces a strict user-ownership model for user profiles, logins, and signup data.
- * Administrative privileges are managed through a separate `roles_admin` collection.
+ * Core Philosophy: This ruleset enforces a strict user-ownership model for user profiles and related data (logins, signups).
+ *  Administrative privileges are granted based on the existence of a document in the `/roles_admin/{userId}` collection.
+ *  Authorization Independence is achieved primarily through path-based ownership for user-related data.
  *
  * Data Structure:
- * - /users/{userId}: Stores user profile information, with userId matching the authenticated user's UID.
- * - /users/{userId}/logins/{loginId}: Stores login history for each user, with owner-only access.
- * - /users/{userId}/signups/{signupId}: Stores signup information for each user, with owner-only access.
- * - /roles_admin/{userId}: Presence of a document grants admin privileges to the specified user.
+ * - /users/{userId}: Stores user profile information.
+ * - /users/{userId}/logins/{loginId}: Stores login history for each user.
+ * - /users/{userId}/signups/{signupId}: Stores signup information for each user.
+ * - /roles_admin/{userId}: Presence of a document grants admin role to the specified user. Document content is irrelevant; existence is the key.
  *
  * Key Security Decisions:
- * - User listing is disallowed to protect user privacy.
- * - All write operations require a verified, authenticated user.
- * - Authorization Independence is achieved by relating the id of user resources to the request id.
+ * - Users can only read and write their own profile data and related subcollections (logins, signups).
+ * - Listing users is not allowed for non-admins.
+ * - Admin privileges are determined by presence in the `/roles_admin` collection.
+ *
+ * Denormalization for Authorization:
+ *  - User roles could be denormalized into the user document itself (e.g., `users/{userId}.role`). Currently, admin privileges are checked via document existence in `/roles_admin/{userId}`.
+ *  - User documents MUST contain their own ID for relational integrity checks (e.g., `request.resource.data.id == userId`).
+ *
+ * Structural Segregation:
+ * - User-specific data is nested under `/users/{userId}` to ensure clear ownership and simplify list operations.
  */
 rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
 
     /**
-     * @description Checks if the request is authenticated.
+     * @description Checks if the request is made by a signed-in user.
      * @path N/A
      * @allow N/A
      * @deny N/A
-     * @principle Requires a verified, authenticated user for all operations.
+     * @principle Requires authentication for protected resources.
      */
     function isSignedIn() {
       return request.auth != null;
     }
 
     /**
-     * @description Checks if the authenticated user's ID matches the provided userId.
+     * @description Checks if the authenticated user ID matches the provided user ID.
      * @path N/A
      * @allow N/A
      * @deny N/A
-     * @principle Enforces document ownership.
+     * @principle Enforces user ownership.
      */
     function isOwner(userId) {
-      return isSignedIn() && request.auth.uid == userId;
+      return request.auth.uid == userId;
     }
 
     /**
-     * @description Checks if the authenticated user is an existing owner of the resource
+     * @description Checks if the authenticated user is an existing owner of the document.
      * @path N/A
      * @allow N/A
      * @deny N/A
-     * @principle Enforces that the resource exists before the rule can use it.
+     * @principle Enforces user ownership and document existence.
      */
     function isExistingOwner(userId) {
-        return isOwner(userId) && resource != null;
+      return isOwner(userId) && resource != null;
     }
 
-    /**
-     * @description Checks if the authenticated user has admin privileges.
-     * @path N/A
-     * @allow N/A
-     * @deny N/A
-     * @principle Checks the roles_admin collection for admin privileges.
-     */
+     /**
+      * @description Checks if the authenticated user is an admin.
+      * @path N/A
+      * @allow N/A
+      * @deny N/A
+      * @principle Checks for admin privileges based on document existence in /roles_admin/{userId}.
+      */
     function isAdmin() {
       return exists(/databases/$(database)/documents/roles_admin/$(request.auth.uid));
     }
@@ -67,69 +74,86 @@ service cloud.firestore {
     /**
      * @description Rules for user profiles.
      * @path /users/{userId}
-     * @allow (create) User with matching ID can create their profile.
-     * @allow (get) Any authenticated user can read any user profile.
-     * @deny (create) User tries to create a profile with an ID that doesn't match their own.
-     * @deny (update) User tries to update another user's profile.
-     * @principle Enforces document ownership for writes and allows public reads.
+     * @allow (create) User with ID 'user123' creates their own profile.
+     * @deny (create) User with ID 'user456' tries to create a profile for 'user123'.
+     * @allow (get) Any user can read another user's profile.
+     * @deny (list) Non-admin users attempting to list all user profiles.
+     * @allow (update) User with ID 'user123' updates their own profile.
+     * @deny (update) User with ID 'user456' tries to update profile of 'user123'.
+     * @allow (delete) User with ID 'user123' deletes their own profile.
+     * @deny (delete) User with ID 'user456' tries to delete profile of 'user123'.
+     * @principle Enforces document ownership for writes, allows public reads, and restricts listing to admins.
      */
     match /users/{userId} {
       allow get: if true;
-      allow list: if false;
-
-      allow create: if isOwner(userId) && request.resource.data.id == userId;
+      allow list: if isAdmin();
+      allow create: if isSignedIn() && isOwner(userId) && request.resource.data.id == userId;
       allow update: if isExistingOwner(userId) && request.resource.data.id == resource.data.id;
       allow delete: if isExistingOwner(userId);
     }
 
     /**
-     * @description Rules for user login data.
+     * @description Rules for user login history.
      * @path /users/{userId}/logins/{loginId}
-     * @allow (create) User with matching ID can create their login data.
-     * @deny (create) User tries to create login data with an ID that doesn't match their own.
-     * @deny (update) User tries to update another user's login data.
-     * @principle Enforces document ownership for writes and restricts access to a user's own login data.
+     * @allow (create) User with ID 'user123' creates a login entry under their profile.
+     * @deny (create) User with ID 'user456' tries to create a login entry under 'user123' profile.
+     * @allow (get) User with ID 'user123' reads a login entry under their profile.
+     * @deny (get) User with ID 'user456' tries to read login entry under 'user123' profile.
+     * @allow (list) User with ID 'user123' lists login entries under their profile.
+     * @deny (list) User with ID 'user456' tries to list login entries under 'user123' profile.
+     * @allow (update) User with ID 'user123' updates a login entry under their profile.
+     * @deny (update) User with ID 'user456' tries to update a login entry under 'user123' profile.
+     * @allow (delete) User with ID 'user123' deletes a login entry under their profile.
+     * @deny (delete) User with ID 'user456' tries to delete a login entry under 'user123' profile.
+     * @principle Restricts access to a user's own login data tree.
      */
     match /users/{userId}/logins/{loginId} {
-      allow get: if isOwner(userId);
-      allow list: if isOwner(userId);
-
-      allow create: if isOwner(userId);
+      allow get, list: if isOwner(userId);
+      allow create: if isSignedIn() && isOwner(userId);
       allow update: if isExistingOwner(userId);
       allow delete: if isExistingOwner(userId);
     }
 
     /**
-     * @description Rules for user signup data.
+     * @description Rules for user signup information.
      * @path /users/{userId}/signups/{signupId}
-     * @allow (create) User with matching ID can create their signup data.
-     * @deny (create) User tries to create signup data with an ID that doesn't match their own.
-     * @deny (update) User tries to update another user's signup data.
-     * @principle Enforces document ownership for writes and restricts access to a user's own signup data.
+     * @allow (create) User with ID 'user123' creates a signup entry under their profile.
+     * @deny (create) User with ID 'user456' tries to create a signup entry under 'user123' profile.
+     * @allow (get) User with ID 'user123' reads a signup entry under their profile.
+     * @deny (get) User with ID 'user456' tries to read signup entry under 'user123' profile.
+     * @allow (list) User with ID 'user123' lists signup entries under their profile.
+     * @deny (list) User with ID 'user456' tries to list signup entries under 'user123' profile.
+     * @allow (update) User with ID 'user123' updates a signup entry under their profile.
+     * @deny (update) User with ID 'user456' tries to update a signup entry under 'user123' profile.
+     * @allow (delete) User with ID 'user123' deletes a signup entry under their profile.
+     * @deny (delete) User with ID 'user456' tries to delete a signup entry under 'user123' profile.
+     * @principle Restricts access to a user's own signup data tree.
      */
     match /users/{userId}/signups/{signupId} {
-      allow get: if isOwner(userId);
-      allow list: if isOwner(userId);
-
-      allow create: if isOwner(userId);
+      allow get, list: if isOwner(userId);
+      allow create: if isSignedIn() && isOwner(userId);
       allow update: if isExistingOwner(userId);
       allow delete: if isExistingOwner(userId);
     }
 
     /**
-     * @description Rules for admin role assignment.
+     * @description Rules for granting admin roles.
      * @path /roles_admin/{userId}
-     * @allow (create) Only an admin can grant admin privileges.
-     * @deny (create) Non-admin users cannot grant admin privileges.
-     * @deny (update) No updates allowed after creation.
-     * @principle Restricts admin role assignment to existing administrators.
+     * @allow (create) An existing admin grants admin role to another user.
+     * @deny (create) A non-admin attempts to grant admin role to another user.
+     * @allow (get) Any admin can check if a user has admin privileges.
+     * @deny (list) Listing all admin roles is disallowed.
+     * @allow (update) An existing admin updates the admin role of another user.
+     * @deny (update) A non-admin attempts to update admin role of another user.
+     * @allow (delete) An existing admin removes admin role from a user.
+     * @deny (delete) A non-admin attempts to remove admin role from a user.
+     * @principle Admin roles can only be managed by existing admins.
      */
     match /roles_admin/{userId} {
       allow get: if isAdmin();
       allow list: if false;
-
       allow create: if isAdmin();
-      allow update: if false;
+      allow update: if isAdmin();
       allow delete: if isAdmin();
     }
   }

@@ -2,7 +2,7 @@
 
 import { Logo } from '@/components/shared/logo';
 import { Button } from '@/components/ui/button';
-import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger, SheetDescription } from '@/components/ui/sheet';
+import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetDescription, SheetTrigger } from '@/components/ui/sheet';
 import { Menu, Search } from 'lucide-react';
 import Link from 'next/link';
 import { Input } from '../ui/input';
@@ -12,6 +12,7 @@ import { useState, useEffect } from 'react';
 import { useAuth, useUser } from '@/firebase';
 import { Avatar, AvatarFallback, AvatarImage } from '../ui/avatar';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from '../ui/dropdown-menu';
+import { useAdmin } from '@/hooks/use-admin';
 
 const navLinks = [
   { href: '/courses', label: 'Courses' },
@@ -25,6 +26,7 @@ export function Header() {
   const { user, isUserLoading } = useUser();
   const auth = useAuth();
   const [open, setOpen] = useState(false);
+  const { isAdmin } = useAdmin();
 
   useEffect(() => {
     // If the user navigates back/forward, update the search input
@@ -101,6 +103,11 @@ export function Header() {
                   <DropdownMenuItem asChild>
                     <Link href="/dashboard/profile">Profile</Link>
                   </DropdownMenuItem>
+                  {isAdmin && (
+                    <DropdownMenuItem asChild>
+                      <Link href="/admin">Admin</Link>
+                    </DropdownMenuItem>
+                  )}
                   <DropdownMenuItem onClick={handleSignOut}>
                     Sign Out
                   </DropdownMenuItem>
@@ -121,9 +128,9 @@ export function Header() {
               </Button>
             </SheetTrigger>
             <SheetContent side="left">
-               <SheetHeader className="sr-only">
-                <SheetTitle>Mobile Menu</SheetTitle>
-                <SheetDescription>
+               <SheetHeader>
+                <SheetTitle className="sr-only">Mobile Menu</SheetTitle>
+                <SheetDescription className="sr-only">
                   A list of navigation links and user actions for mobile view.
                 </SheetDescription>
               </SheetHeader>

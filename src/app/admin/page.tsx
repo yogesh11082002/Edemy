@@ -54,8 +54,8 @@ export default function AdminPage() {
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      email: 'yogeshthakur9536@gmail.com',
-      password: 'Learn@458',
+      email: '',
+      password: '',
     },
   });
 

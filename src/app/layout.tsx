@@ -1,11 +1,10 @@
 import type { Metadata } from 'next';
 import './globals.css';
 import { cn } from '@/lib/utils';
-import { Header } from '@/components/layout/header';
-import { Footer } from '@/components/layout/footer';
 import { Toaster } from '@/components/ui/toaster';
 import { ThemeProvider } from '@/components/providers/theme-provider';
 import { FirebaseClientProvider } from '@/firebase';
+import { AppLayout } from '@/components/layout/app-layout';
 
 export const metadata: Metadata = {
   title: 'Edemy',
@@ -39,9 +38,9 @@ export default function RootLayout({
             enableSystem
             disableTransitionOnChange
           >
-            <Header />
-            <main className="flex-grow">{children}</main>
-            <Footer />
+            <AppLayout>
+              {children}
+            </AppLayout>
             <Toaster />
           </ThemeProvider>
         </FirebaseClientProvider>

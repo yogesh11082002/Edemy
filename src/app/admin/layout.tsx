@@ -1,7 +1,7 @@
 'use client';
 import { useUser } from '@/firebase';
-import { useRouter }d from 'next/navigation';
-import { useEffect }d from 'react';
+import { useRouter } from 'next/navigation';
+import { useEffect } from 'react';
 import {
   Bell,
   BookOpen,

@@ -40,10 +40,12 @@ export default function AdminPage() {
   const { user, isUserLoading } = useUser();
   const { isAdmin, isLoading: isAdminLoading } = useAdmin();
   const { toast } = useToast();
-  const [isLoading, setIsLoading] = useState(false);
-  
-  // This state tracks if a login attempt has been made
-  const [loginAttempted, setLoginAttempted] = useState(false);
+  const [isLoggingIn, setIsLoggingIn] = useState(false);
+  const [isClaimingRole, setIsClaimingRole] = useState(false);
+
+  // This state tracks if a user is authenticated on this specific admin page session
+  // It's separate from the global `user` state to manage the dedicated login flow
+  const [isAdminAuthenticated, setIsAdminAuthenticated] = useState(false);
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -53,65 +55,78 @@ export default function AdminPage() {
     },
   });
 
+  useEffect(() => {
+    // If the global user is an admin, we can set the local auth state
+    if (user && isAdmin) {
+      setIsAdminAuthenticated(true);
+    }
+  }, [user, isAdmin]);
+
   async function onSubmit(values: z.infer<typeof formSchema>) {
-    setIsLoading(true);
+    setIsLoggingIn(true);
     if (!auth) {
       toast({
         variant: 'destructive',
-        title: 'Login Failed',
+        title: 'Authentication Failed',
         description: 'Authentication service is not available.',
       });
-      setIsLoading(false);
+      setIsLoggingIn(false);
       return;
     }
 
-    if (values.email !== 'yogeshthakur9536@gmail.com') {
-        toast({
-            variant: 'destructive',
-            title: 'Unauthorized',
-            description: 'This email is not authorized for admin access.',
-        });
-        setIsLoading(false);
-        return;
-    }
-
     try {
-      await signInWithEmailAndPassword(auth, values.email, values.password);
-      setLoginAttempted(true); // Mark that a login was attempted to trigger re-evaluation
+      // First, try to sign in
+      const userCredential = await signInWithEmailAndPassword(auth, values.email, values.password);
+      
+      // After successful sign-in, the useAdmin hook will re-evaluate.
+      // We don't need to do anything here immediately, as the useEffect and component body
+      // will handle the display change based on the updated `isAdmin` value.
       toast({
         title: 'Login Successful',
         description: 'Verifying admin privileges...',
       });
+      // A small delay to allow hooks to update before hiding the form
+      setTimeout(() => {
+        // We let the main render logic decide what to show now.
+        // We set isAdminAuthenticated to true if the login was successful.
+        // The isAdmin check will then determine the final view.
+        if (userCredential.user) {
+          // This doesn't mean they are an admin yet, just that login worked.
+          // The useAdmin hook will determine the final role.
+        }
+      }, 1000);
+
     } catch (error: any) {
       toast({
         variant: 'destructive',
-        title: 'Login Failed',
+        title: 'Authentication Failed',
         description: 'Invalid credentials. Please try again.',
       });
     } finally {
-      setIsLoading(false);
+      setIsLoggingIn(false);
     }
   }
 
   const handleClaimAdmin = async () => {
     if (user) {
-        setIsLoading(true);
+        setIsClaimingRole(true);
         try {
             await claimAdminRole(user.uid);
             toast({
                 title: "Role Claimed!",
-                description: "Admin role has been successfully claimed. Refreshing...",
+                description: "Admin role has been successfully claimed. You now have access.",
             });
-            // Force a re-check of admin status by re-fetching user or re-evaluating useAdmin
-            window.location.reload(); 
+            // Force a re-check of admin status by forcing a re-render or state update
+             // This might not be instant, a page reload is the most reliable way
+            window.location.reload();
         } catch (error: any) {
              toast({
                 variant: 'destructive',
                 title: "Failed to Claim Role",
-                description: error.message,
+                description: error.message || "An unexpected error occurred.",
             });
         } finally {
-            setIsLoading(false);
+            setIsClaimingRole(false);
         }
     }
   }
@@ -119,19 +134,20 @@ export default function AdminPage() {
   const handleLogout = async () => {
     if (auth) {
       await auth.signOut();
-      setLoginAttempted(false); // Reset login attempt state
+      setIsAdminAuthenticated(false);
       toast({
         title: 'Logged Out',
-        description: 'You have been successfully logged out.',
+        description: 'You have been successfully logged out from the admin panel.',
       });
     }
   }
   
-  if (isUserLoading || (loginAttempted && isAdminLoading)) {
-      return <div className="container mx-auto py-12 text-center">Verifying credentials...</div>;
+  // While hooks are loading initial user and admin status
+  if (isUserLoading || isAdminLoading) {
+      return <div className="text-center py-16">Initializing...</div>;
   }
-
-  // If user is logged in AND is an admin, show the dashboard
+  
+  // If the user is successfully authenticated and IS an admin, show the dashboard
   if (user && isAdmin) {
     return (
        <div className="grid gap-8 sm:grid-cols-2 lg:grid-cols-3">
@@ -172,20 +188,20 @@ export default function AdminPage() {
     );
   }
   
-  // If user is logged in but NOT an admin
+  // If a user is logged in, but is NOT an admin
   if (user && !isAdmin) {
        return (
             <Card className="w-full max-w-md mx-auto">
                 <CardHeader>
                     <CardTitle className="text-2xl font-bold text-destructive">Access Denied</CardTitle>
                     <CardDescription>
-                       You have successfully logged in, but you do not have permission to access this page. 
-                       If you are the designated admin, please claim your role.
+                       You have successfully logged in as {user.email}, but you do not have permission to access the admin dashboard. 
+                       If this is the designated admin account, please claim your role.
                     </CardDescription>
                 </CardHeader>
                 <CardContent className="flex flex-col gap-4">
-                   <Button onClick={handleClaimAdmin} disabled={isLoading}>
-                       {isLoading ? "Claiming..." : "Claim Admin Role"}
+                   <Button onClick={handleClaimAdmin} disabled={isClaimingRole}>
+                       {isClaimingRole ? "Claiming..." : "Claim Admin Role"}
                    </Button>
                     <Button onClick={handleLogout} variant="outline">Log Out</Button>
                 </CardContent>
@@ -193,7 +209,7 @@ export default function AdminPage() {
        );
   }
 
-  // Default view: Show the admin login form
+  // If no user is logged in (or the logged-in user isn't admin), show the admin login form
   return (
     <div className="flex items-center justify-center">
       <Card className="w-full max-w-md">
@@ -236,8 +252,8 @@ export default function AdminPage() {
                   </FormItem>
                 )}
               />
-              <Button type="submit" className="w-full" disabled={isLoading}>
-                {isLoading ? 'Logging in...' : 'Log In'}
+              <Button type="submit" className="w-full" disabled={isLoggingIn}>
+                {isLoggingIn ? 'Logging in...' : 'Log In'}
               </Button>
             </form>
           </Form>

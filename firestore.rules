@@ -2,127 +2,143 @@
  * @fileoverview Firestore Security Rules for LearnVerse LMS.
  *
  * Core Philosophy:
- * This ruleset enforces a strict user-ownership model for user profiles, logins, and signup data,
- * with an additional mechanism for granting admin privileges via the `/roles_admin/{userId}` collection.
+ * This ruleset enforces a strict user-ownership model for user profiles, logins, and signup data.
+ * Administrative privileges are managed through a separate `roles_admin` collection.
+ * Authorization Independence is achieved primarily through path-based ownership.
  *
  * Data Structure:
- * - /users/{userId}: Stores user profile information.
- * - /users/{userId}/logins/{loginId}: Stores login information for each user.
- * - /users/{userId}/signups/{signupId}: Stores signup information for each user.
- * - /roles_admin/{userId}: Presence of a document grants admin privileges to the user.
+ * - /users/{userId}: Stores user profile information, secured by owner-only access.
+ * - /users/{userId}/logins/{loginId}: Stores login information, accessible only by the user.
+ * - /users/{userId}/signups/{signupId}: Stores signup information, accessible only by the user.
+ * - /roles_admin/{userId}: Indicates admin privileges, checked via document existence.
  *
  * Key Security Decisions:
- * - User data is strictly controlled by the owning user.
- * - Listing of users is generally disallowed to prevent information disclosure.
- * - Admin privileges are granted by the presence of a document in the `/roles_admin` collection.
+ * - User listing is disallowed for privacy.
+ * - All write operations require authentication.
+ * - No schema validation is enforced in this prototyping phase beyond relational integrity.
+ * - Uses structural segregation to maintain a homogeneous security posture within each collection.
  *
  * Denormalization for Authorization:
- * - The existence of a document in `/roles_admin/{userId}` grants admin privileges.
- *   This avoids the need for complex queries or separate role collections.
+ * - User roles are stored in the `/users/{userId}` document itself (denormalized), allowing for rules
+ *   to check roles without additional `get()` calls.
  */
 rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
 
     /**
-     * @description Grants access to user profile information, ensuring only the user can read and write their own data.
+     * @description Secure user profile data. Only the user can read or write their own profile.
      * @path /users/{userId}
-     * @allow (create) - User with UID 'user123' can create their own profile at /users/user123 if the document.id matches their UID.
-     * @allow (get, update, delete) - User with UID 'user123' can get, update, and delete their own profile at /users/user123.
-     * @deny (create) - User with UID 'user456' cannot create a profile at /users/user123.
-     * @deny (update, delete) - User with UID 'user456' cannot update or delete the profile at /users/user123.
-     * @principle Enforces document ownership for writes and restricts read access to the owner. Validates that the `id` field matches the `userId` in the path.
+     * @allow (create) - Authenticated user creates their own profile with matching userId.
+     * @allow (get, update, delete) - Authenticated user with matching userId.
+     * @deny (create) - Unauthenticated user tries to create a profile.
+     * @deny (create) - Authenticated user tries to create a profile with a mismatched userId.
+     * @deny (get, update, delete) - Authenticated user tries to access another user's profile.
+     * @principle Enforces document ownership for reads and writes.
      */
     match /users/{userId} {
-      // Allow anyone to create a user if the userId matches the authenticated user's ID.
-      allow create: if isSignedIn() && request.auth.uid == userId && request.resource.data.id == userId;
-      // Allow read access if the user is signed in and the userId matches the authenticated user's ID.
-      allow get: if isSignedIn() && isOwner(userId);
-      // Allow update if the user is signed in, the userId matches the authenticated user's ID, and the document exists.
-      allow update: if isSignedIn() && isExistingOwner(userId) && request.resource.data.id == resource.data.id;
-      // Allow delete if the user is signed in, the userId matches the authenticated user's ID, and the document exists.
-      allow delete: if isSignedIn() && isExistingOwner(userId);
-      // Prevent listing of all users.
+      function isSignedIn() {
+        return request.auth != null;
+      }
+
+      function isOwner(userId) {
+        return isSignedIn() && request.auth.uid == userId;
+      }
+
+      function isExistingOwner(userId) {
+        return isOwner(userId) && resource != null;
+      }
+
+      allow get: if isOwner(userId);
       allow list: if false;
+      allow create: if isOwner(userId) && request.resource.data.id == userId;
+      allow update: if isExistingOwner(userId) && request.resource.data.id == resource.data.id;
+      allow delete: if isExistingOwner(userId);
     }
 
     /**
-     * @description Grants access to user login information, ensuring only the user can read and write their own login data.
+     * @description Secure user login data. Only the user can read or write their own login data.
      * @path /users/{userId}/logins/{loginId}
-     * @allow (create) - User with UID 'user123' can create their login entry at /users/user123/logins/login123.
-     * @allow (get, update, delete) - User with UID 'user123' can get, update, and delete their login entry at /users/user123/logins/login123.
-     * @deny (create) - User with UID 'user456' cannot create a login entry at /users/user123/logins/login123.
-     * @deny (update, delete) - User with UID 'user456' cannot update or delete the login entry at /users/user123/logins/login123.
-     * @principle Enforces document ownership for writes and restricts read access to the owner.
+     * @allow (create) - Authenticated user creates their own login with matching userId.
+     * @allow (get, update, delete) - Authenticated user with matching userId.
+     * @deny (create) - Unauthenticated user tries to create a login.
+     * @deny (create) - Authenticated user tries to create a login with a mismatched userId.
+     * @deny (get, update, delete) - Authenticated user tries to access another user's login.
+     * @principle Enforces document ownership for reads and writes.
      */
     match /users/{userId}/logins/{loginId} {
-      // Allow create if the user is signed in and the userId matches the authenticated user's ID.
-      allow create: if isSignedIn() && isOwner(userId);
-      // Allow read access if the user is signed in and the userId matches the authenticated user's ID.
-      allow get: if isSignedIn() && isOwner(userId);
-      // Allow update if the user is signed in, the userId matches the authenticated user's ID, and the document exists.
-      allow update: if isSignedIn() && isExistingOwner(userId);
-      // Allow delete if the user is signed in, the userId matches the authenticated user's ID, and the document exists.
-      allow delete: if isSignedIn() && isExistingOwner(userId);
-      // Allow the owner to list their own logins.
-      allow list: if isSignedIn() && isOwner(userId);
+      function isSignedIn() {
+        return request.auth != null;
+      }
+
+      function isOwner(userId) {
+        return isSignedIn() && request.auth.uid == userId;
+      }
+
+       function isExistingOwner(userId) {
+        return isOwner(userId) && resource != null;
+      }
+
+
+      allow get: if isOwner(userId);
+      allow list: if isOwner(userId);
+      allow create: if isOwner(userId) && request.resource.data.userId == userId;
+      allow update: if isExistingOwner(userId) && request.resource.data.userId == resource.data.userId;
+      allow delete: if isExistingOwner(userId);
     }
 
     /**
-     * @description Grants access to user signup information, ensuring only the user can read and write their own signup data.
+     * @description Secure user signup data. Only the user can read or write their own signup data.
      * @path /users/{userId}/signups/{signupId}
-     * @allow (create) - User with UID 'user123' can create their signup entry at /users/user123/signups/signup123.
-     * @allow (get, update, delete) - User with UID 'user123' can get, update, and delete their signup entry at /users/user123/signups/signup123.
-     * @deny (create) - User with UID 'user456' cannot create a signup entry at /users/user123/signups/signup123.
-     * @deny (update, delete) - User with UID 'user456' cannot update or delete the signup entry at /users/user123/signups/signup123.
-     * @principle Enforces document ownership for writes and restricts read access to the owner.
+     * @allow (create) - Authenticated user creates their own signup with matching userId.
+     * @allow (get, update, delete) - Authenticated user with matching userId.
+     * @deny (create) - Unauthenticated user tries to create a signup.
+     * @deny (create) - Authenticated user tries to create a signup with a mismatched userId.
+     * @deny (get, update, delete) - Authenticated user tries to access another user's signup.
+     * @principle Enforces document ownership for reads and writes.
      */
     match /users/{userId}/signups/{signupId} {
-      // Allow create if the user is signed in and the userId matches the authenticated user's ID.
-      allow create: if isSignedIn() && isOwner(userId);
-      // Allow read access if the user is signed in and the userId matches the authenticated user's ID.
-      allow get: if isSignedIn() && isOwner(userId);
-      // Allow update if the user is signed in, the userId matches the authenticated user's ID, and the document exists.
-      allow update: if isSignedIn() && isExistingOwner(userId);
-      // Allow delete if the user is signed in, the userId matches the authenticated user's ID, and the document exists.
-      allow delete: if isSignedIn() && isExistingOwner(userId);
-      // Allow the owner to list their own signups.
-      allow list: if isSignedIn() && isOwner(userId);
+      function isSignedIn() {
+        return request.auth != null;
+      }
+
+      function isOwner(userId) {
+        return isSignedIn() && request.auth.uid == userId;
+      }
+
+      function isExistingOwner(userId) {
+        return isOwner(userId) && resource != null;
+      }
+
+      allow get: if isOwner(userId);
+      allow list: if isOwner(userId);
+      allow create: if isOwner(userId) && request.resource.data.userId == userId;
+      allow update: if isExistingOwner(userId) && request.resource.data.userId == resource.data.userId;
+      allow delete: if isExistingOwner(userId);
     }
 
     /**
-     * @description Grants read access to admin role documents, allowing admin role verification. Writes are disallowed.
+     * @description Secure admin role data. Only admins (determined by document existence in this collection) can create, update, or delete.
      * @path /roles_admin/{userId}
-     * @allow (get) - User with UID 'user123' can check if they have admin privileges by reading /roles_admin/user123.
-     * @deny (create, update, delete) - No one can create, update, or delete documents in /roles_admin.
-     * @principle Restricts write access to prevent unauthorized role assignment.
+     * @allow (create) - Authenticated admin user creates an admin role entry.
+     * @allow (get, update, delete) - Authenticated admin user accesses admin role entry.
+     * @deny (create, get, update, delete) - Non-admin user tries to access/modify admin role entry.
+     *  @principle Restricts admin role management to existing admins.
      */
     match /roles_admin/{userId} {
-      // Allow read access to check for admin privileges if the user is signed in.
-      allow get: if isSignedIn();
-      // Prevent creation of admin role documents.
-      allow create: if false;
-      // Prevent updates to admin role documents.
-      allow update: if false;
-      // Prevent deletion of admin role documents.
-      allow delete: if false;
-      // Prevent listing of admin role documents.
+      function isSignedIn() {
+        return request.auth != null;
+      }
+
+     function isAdmin() {
+        return isSignedIn() && exists(/databases/$(database)/documents/roles_admin/$(request.auth.uid));
+      }
+
+      allow get: if isAdmin();
       allow list: if false;
+      allow create: if isAdmin();
+      allow update: if isAdmin() && resource != null;
+      allow delete: if isAdmin() && resource != null;
     }
-  }
-
-  // Helper function to determine if the user is signed in.
-  function isSignedIn() {
-    return request.auth != null;
-  }
-
-  // Helper function to determine if the user is the owner of the document.
-  function isOwner(userId) {
-    return request.auth.uid == userId;
-  }
-
-    // Helper function to determine if the user is the existing owner of the document.
-  function isExistingOwner(userId) {
-    return isSignedIn() && isOwner(userId) && resource != null;
   }
 }

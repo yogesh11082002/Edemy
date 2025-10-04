@@ -21,10 +21,12 @@ import {
   FormMessage,
 } from '@/components/ui/form';
 import { useAuth, useUser } from '@/firebase';
-import { signInWithEmailAndPassword, User } from 'firebase/auth';
+import { signInWithEmailAndPassword } from 'firebase/auth';
 import { useToast } from '@/hooks/use-toast';
 import { useState, useEffect } from 'react';
-import { BarChart, BookOpen, Users } from 'lucide-react';
+import { BarChart, BookOpen, DollarSign, Users, Activity } from 'lucide-react';
+import { AdminHeader } from '@/components/admin/admin-header';
+import { ResponsiveContainer, AreaChart, CartesianGrid, XAxis, Tooltip, Area } from 'recharts';
 
 const formSchema = z.object({
   email: z.string().email({ message: 'Please enter a valid email address.' }),
@@ -33,7 +35,14 @@ const formSchema = z.object({
     .min(6, { message: 'Password must be at least 6 characters.' }),
 });
 
-const ADMIN_EMAIL = 'yogeshthakur9536@gmail.com';
+const chartData = [
+  { date: 'Jan', users: 120, revenue: 1500 },
+  { date: 'Feb', users: 180, revenue: 2200 },
+  { date: 'Mar', users: 250, revenue: 3100 },
+  { date: 'Apr', users: 210, revenue: 2800 },
+  { date: 'May', users: 320, revenue: 4000 },
+  { date: 'Jun', users: 380, revenue: 4500 },
+];
 
 export default function AdminPage() {
   const auth = useAuth();
@@ -51,24 +60,14 @@ export default function AdminPage() {
   });
 
   useEffect(() => {
-    // If a user is already logged in and is the admin, show the dashboard
-    if (user && user.email === ADMIN_EMAIL) {
+    if (user) {
       setIsAuthenticated(true);
     } else {
       setIsAuthenticated(false);
     }
-  }, [user, isUserLoading]);
+  }, [user]);
 
   async function onSubmit(values: z.infer<typeof formSchema>) {
-    if (values.email !== ADMIN_EMAIL) {
-      toast({
-        variant: 'destructive',
-        title: 'Authentication Failed',
-        description: 'This email is not authorized for admin access.',
-      });
-      return;
-    }
-
     setIsLoggingIn(true);
     if (!auth) {
       toast({
@@ -81,16 +80,11 @@ export default function AdminPage() {
     }
 
     try {
-      // Sign in the user
       await signInWithEmailAndPassword(auth, values.email, values.password);
-      
-      // On successful login, the useEffect will trigger and set isAuthenticated to true.
       toast({
         title: 'Login Successful',
         description: 'Welcome, Admin!',
       });
-      // The state change will automatically render the dashboard.
-
     } catch (error: any) {
       toast({
         variant: 'destructive',
@@ -101,68 +95,92 @@ export default function AdminPage() {
       setIsLoggingIn(false);
     }
   }
-  
-  const handleLogout = async () => {
-    if (auth) {
-      await auth.signOut();
-      setIsAuthenticated(false);
-      form.reset(); // Clear form on logout
-      toast({
-        title: 'Logged Out',
-        description: 'You have been successfully logged out from the admin panel.',
-      });
-    }
-  }
-  
-  // While hooks are loading initial user status
+
   if (isUserLoading) {
       return <div className="text-center py-16">Initializing...</div>;
   }
   
-  // If the user is authenticated as admin, show the dashboard
   if (isAuthenticated) {
     return (
-       <div className="grid gap-8 sm:grid-cols-2 lg:grid-cols-3">
-        <Card>
+      <>
+        <AdminHeader title="Admin Dashboard" description="An overview of your platform's performance." />
+        <div className="grid gap-4 md:grid-cols-2 md:gap-8 lg:grid-cols-4">
+          <Card>
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                <CardTitle className="text-sm font-medium">User Management</CardTitle>
-                <Users className="h-4 w-4 text-muted-foreground" />
+              <CardTitle className="text-sm font-medium">
+                Total Revenue
+              </CardTitle>
+              <DollarSign className="h-4 w-4 text-muted-foreground" />
             </CardHeader>
             <CardContent>
-                <div className="text-2xl font-bold">1,234</div>
-                <p className="text-xs text-muted-foreground">Total registered users</p>
+              <div className="text-2xl font-bold">$45,231.89</div>
+              <p className="text-xs text-muted-foreground">
+                +20.1% from last month
+              </p>
             </CardContent>
-        </Card>
-         <Card>
+          </Card>
+          <Card>
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                <CardTitle className="text-sm font-medium">Course Management</CardTitle>
-                <BookOpen className="h-4 w-4 text-muted-foreground" />
+              <CardTitle className="text-sm font-medium">
+                Total Users
+              </CardTitle>
+              <Users className="h-4 w-4 text-muted-foreground" />
             </CardHeader>
             <CardContent>
-                <div className="text-2xl font-bold">42</div>
-                <p className="text-xs text-muted-foreground">Total courses available</p>
+              <div className="text-2xl font-bold">+2350</div>
+              <p className="text-xs text-muted-foreground">
+                +180.1% from last month
+              </p>
             </CardContent>
-        </Card>
-         <Card>
+          </Card>
+          <Card>
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                <CardTitle className="text-sm font-medium">Analytics</CardTitle>
-                <BarChart className="h-4 w-4 text-muted-foreground" />
+              <CardTitle className="text-sm font-medium">Total Courses</CardTitle>
+              <BookOpen className="h-4 w-4 text-muted-foreground" />
             </CardHeader>
             <CardContent>
-                <div className="text-2xl font-bold">$12,345</div>
-                <p className="text-xs text-muted-foreground">Total revenue this month</p>
+              <div className="text-2xl font-bold">+57</div>
+              <p className="text-xs text-muted-foreground">
+                +12 since last month
+              </p>
             </CardContent>
-        </Card>
-        <div className="col-span-full">
-            <Button onClick={handleLogout} variant="destructive">Log Out</Button>
+          </Card>
+          <Card>
+            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+              <CardTitle className="text-sm font-medium">Active Now</CardTitle>
+              <Activity className="h-4 w-4 text-muted-foreground" />
+            </CardHeader>
+            <CardContent>
+              <div className="text-2xl font-bold">+573</div>
+              <p className="text-xs text-muted-foreground">
+                Currently on the platform
+              </p>
+            </CardContent>
+          </Card>
         </div>
-      </div>
+        <Card className="col-span-4">
+            <CardHeader>
+                <CardTitle>Platform Analytics</CardTitle>
+                <CardDescription>User and revenue growth over the last 6 months.</CardDescription>
+            </CardHeader>
+            <CardContent className="pl-2 h-[350px]">
+                <ResponsiveContainer width="100%" height="100%">
+                    <AreaChart data={chartData}>
+                        <CartesianGrid strokeDasharray="3 3" />
+                        <XAxis dataKey="date" stroke="#888888" fontSize={12} tickLine={false} axisLine={false} />
+                        <Tooltip />
+                        <Area type="monotone" dataKey="users" stackId="1" stroke="hsl(var(--primary))" fill="hsl(var(--primary) / 0.2)" />
+                        <Area type="monotone" dataKey="revenue" stackId="1" stroke="hsl(var(--accent))" fill="hsl(var(--accent) / 0.2)" />
+                    </AreaChart>
+                </ResponsiveContainer>
+            </CardContent>
+        </Card>
+      </>
     );
   }
 
-  // If no admin is logged in, show the admin login form
   return (
-    <div className="flex items-center justify-center">
+    <div className="flex items-center justify-center w-full h-full">
       <Card className="w-full max-w-md">
         <CardHeader className="text-center">
           <CardTitle className="text-2xl font-bold">Admin Login</CardTitle>

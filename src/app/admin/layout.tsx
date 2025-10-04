@@ -56,7 +56,6 @@ export default function AdminLayout({
     const handleLogout = async () => {
         if (auth) {
             await auth.signOut();
-            form.reset({ email: '', password: '' });
             router.push('/admin');
         }
     }
@@ -163,7 +162,6 @@ export default function AdminLayout({
                <DropdownMenuItem asChild>
                   <Link href="/dashboard/profile">Settings</Link>
                 </DropdownMenuItem>
-              <DropdownMenuItem>Support</DropdownMenuItem>
               <DropdownMenuSeparator />
               <DropdownMenuItem onClick={handleLogout}>Logout</DropdownMenuItem>
             </DropdownMenuContent>

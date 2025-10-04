@@ -10,8 +10,6 @@ import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Label } from '@/components/ui/label';
 import { Input } from '@/components/ui/input';
-import { courses } from '@/lib/placeholder-data';
-import { EnrolledCourseCard } from '@/components/dashboard/student/enrolled-course-card';
 import { updateProfile } from 'firebase/auth';
 import { useToast } from '@/hooks/use-toast';
 
@@ -44,7 +42,7 @@ export default function ProfilePage() {
     e.preventDefault();
     if (user) {
         try {
-            await updateProfile(user, { displayName, photoURL });
+            await updateProfile(user, { displayName });
             toast({
                 title: "Profile Updated",
                 description: "Your profile has been successfully updated.",
@@ -68,14 +66,11 @@ export default function ProfilePage() {
     return name.split(' ').map(n => n[0]).join('');
   }
 
-  const enrolledCourses = courses.slice(0, 3);
-
   return (
     <div className="max-w-4xl mx-auto">
         <Tabs defaultValue="profile" className="w-full">
-            <TabsList className="grid w-full grid-cols-2 md:grid-cols-3 mb-8">
+            <TabsList className="grid w-full grid-cols-2 mb-8">
                 <TabsTrigger value="profile">Profile</TabsTrigger>
-                <TabsTrigger value="courses">My Courses</TabsTrigger>
                 <TabsTrigger value="settings">Settings</TabsTrigger>
             </TabsList>
             <TabsContent value="profile">
@@ -94,24 +89,11 @@ export default function ProfilePage() {
                     </CardHeader>
                     <CardContent>
                     <p className="text-muted-foreground mb-6">
-                        Welcome to your profile. Here you can manage your courses and account settings.
+                        Welcome to your profile. Here you can manage your account settings.
                     </p>
                     <Button onClick={handleSignOut} variant="destructive">
                         Sign Out
                     </Button>
-                    </CardContent>
-                </Card>
-            </TabsContent>
-            <TabsContent value="courses">
-                <Card>
-                    <CardHeader>
-                        <CardTitle>My Enrolled Courses</CardTitle>
-                        <CardDescription>Continue your learning journey.</CardDescription>
-                    </CardHeader>
-                    <CardContent className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
-                        {enrolledCourses.map((course) => (
-                            <EnrolledCourseCard key={course.id} course={course} progress={Math.floor(Math.random() * 80) + 10} />
-                        ))}
                     </CardContent>
                 </Card>
             </TabsContent>
@@ -129,14 +111,6 @@ export default function ProfilePage() {
                                     id="displayName" 
                                     value={displayName} 
                                     onChange={(e) => setDisplayName(e.target.value)}
-                                />
-                            </div>
-                            <div className="space-y-2">
-                                <Label htmlFor="photoURL">Photo URL</Label>
-                                <Input 
-                                    id="photoURL" 
-                                    value={photoURL} 
-                                    onChange={(e) => setPhotoURL(e.target.value)}
                                 />
                             </div>
                              <div className="space-y-2">

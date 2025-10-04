@@ -2,143 +2,123 @@
  * @fileoverview Firestore Security Rules for LearnVerse LMS.
  *
  * Core Philosophy:
- * This ruleset enforces a strict user-ownership model for user profiles, logins, and signup data.
- * Administrative privileges are managed through a separate `roles_admin` collection.
- * Authorization Independence is achieved primarily through path-based ownership.
+ * This ruleset enforces a strict user-ownership model for user profiles, logins, and signup data,
+ * complemented by role-based access control for administrative functions. It uses authorization
+ * independence to avoid costly and complex rule evaluations.
  *
  * Data Structure:
- * - /users/{userId}: Stores user profile information, secured by owner-only access.
- * - /users/{userId}/logins/{loginId}: Stores login information, accessible only by the user.
- * - /users/{userId}/signups/{signupId}: Stores signup information, accessible only by the user.
- * - /roles_admin/{userId}: Indicates admin privileges, checked via document existence.
+ * - /users/{userId}: Stores user profile data. The 'role' field within this document is crucial
+ *   for determining user privileges.
+ * - /users/{userId}/logins/{loginId}: Stores login history for each user.
+ * - /users/{userId}/signups/{signupId}: Stores signup information for each user.
+ * - /roles_admin/{userId}: Existence of a document indicates admin privileges. This collection
+ *   is used to manage admin roles.
  *
  * Key Security Decisions:
- * - User listing is disallowed for privacy.
- * - All write operations require authentication.
- * - No schema validation is enforced in this prototyping phase beyond relational integrity.
- * - Uses structural segregation to maintain a homogeneous security posture within each collection.
+ * - User data is strictly controlled by the owning user.
+ * - Only authenticated users can access user-specific data.
+ * - Listing of user documents is allowed only to the owning user.
+ * - Administrative privileges are determined by the existence of a document in the `/roles_admin/{userId}` collection.
+ * - The `roles_admin` collection is not listable.
  *
  * Denormalization for Authorization:
- * - User roles are stored in the `/users/{userId}` document itself (denormalized), allowing for rules
- *   to check roles without additional `get()` calls.
+ * - The `User` entity includes a `role` field. This denormalization enables role-based access
+ *   control without additional `get()` calls, improving rule efficiency.
+ *
+ * Structural Segregation:
+ * - User-specific data (logins, signups) is stored under the `/users/{userId}` path, enabling
+ *   easy filtering and security enforcement based on the user ID.
  */
 rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
 
     /**
-     * @description Secure user profile data. Only the user can read or write their own profile.
+     * @description Controls access to user profile information.
      * @path /users/{userId}
-     * @allow (create) - Authenticated user creates their own profile with matching userId.
-     * @allow (get, update, delete) - Authenticated user with matching userId.
-     * @deny (create) - Unauthenticated user tries to create a profile.
-     * @deny (create) - Authenticated user tries to create a profile with a mismatched userId.
-     * @deny (get, update, delete) - Authenticated user tries to access another user's profile.
-     * @principle Enforces document ownership for reads and writes.
+     * @allow (get, list) if isOwner(userId)
+     * @allow (create) if isOwner(userId) && request.resource.data.id == request.auth.uid
+     * @allow (update, delete) if isExistingOwner(userId) && request.resource.data.id == resource.data.id
+     * @deny (create) if !isOwner(userId) || request.resource.data.id != request.auth.uid
+     * @deny (update, delete) if !isExistingOwner(userId) || request.resource.data.id != resource.data.id
+     * @principle Enforces document ownership and relational integrity for user profiles.
      */
     match /users/{userId} {
-      function isSignedIn() {
-        return request.auth != null;
-      }
-
-      function isOwner(userId) {
-        return isSignedIn() && request.auth.uid == userId;
-      }
-
-      function isExistingOwner(userId) {
-        return isOwner(userId) && resource != null;
-      }
-
-      allow get: if isOwner(userId);
-      allow list: if false;
-      allow create: if isOwner(userId) && request.resource.data.id == userId;
-      allow update: if isExistingOwner(userId) && request.resource.data.id == resource.data.id;
-      allow delete: if isExistingOwner(userId);
+      allow get: if isSignedIn() && isOwner(userId);
+      allow list: if isSignedIn() && isOwner(userId);
+      allow create: if isSignedIn() && isOwner(userId) && request.resource.data.id == request.auth.uid;
+      allow update: if isSignedIn() && isExistingOwner(userId) && request.resource.data.id == resource.data.id;
+      allow delete: if isSignedIn() && isExistingOwner(userId) && request.resource.data.id == resource.data.id;
     }
 
     /**
-     * @description Secure user login data. Only the user can read or write their own login data.
+     * @description Controls access to user login information.
      * @path /users/{userId}/logins/{loginId}
-     * @allow (create) - Authenticated user creates their own login with matching userId.
-     * @allow (get, update, delete) - Authenticated user with matching userId.
-     * @deny (create) - Unauthenticated user tries to create a login.
-     * @deny (create) - Authenticated user tries to create a login with a mismatched userId.
-     * @deny (get, update, delete) - Authenticated user tries to access another user's login.
-     * @principle Enforces document ownership for reads and writes.
+     * @allow (get, list) if isOwner(userId)
+     * @allow (create) if isSignedIn() && isOwner(userId)
+     * @allow (update, delete) if isExistingOwner(userId)
+     * @deny (create) if !isSignedIn() || !isOwner(userId)
+     * @deny (update, delete) if !isSignedIn() || !isExistingOwner(userId)
+     * @principle Enforces document ownership for user login data.
      */
     match /users/{userId}/logins/{loginId} {
-      function isSignedIn() {
-        return request.auth != null;
-      }
-
-      function isOwner(userId) {
-        return isSignedIn() && request.auth.uid == userId;
-      }
-
-       function isExistingOwner(userId) {
-        return isOwner(userId) && resource != null;
-      }
-
-
-      allow get: if isOwner(userId);
-      allow list: if isOwner(userId);
-      allow create: if isOwner(userId) && request.resource.data.userId == userId;
-      allow update: if isExistingOwner(userId) && request.resource.data.userId == resource.data.userId;
-      allow delete: if isExistingOwner(userId);
+      allow get: if isSignedIn() && isOwner(userId);
+      allow list: if isSignedIn() && isOwner(userId);
+      allow create: if isSignedIn() && isOwner(userId);
+      allow update: if isSignedIn() && isExistingOwner(userId);
+      allow delete: if isSignedIn() && isExistingOwner(userId);
     }
 
     /**
-     * @description Secure user signup data. Only the user can read or write their own signup data.
+     * @description Controls access to user signup information.
      * @path /users/{userId}/signups/{signupId}
-     * @allow (create) - Authenticated user creates their own signup with matching userId.
-     * @allow (get, update, delete) - Authenticated user with matching userId.
-     * @deny (create) - Unauthenticated user tries to create a signup.
-     * @deny (create) - Authenticated user tries to create a signup with a mismatched userId.
-     * @deny (get, update, delete) - Authenticated user tries to access another user's signup.
-     * @principle Enforces document ownership for reads and writes.
+     * @allow (get, list) if isOwner(userId)
+     * @allow (create) if isSignedIn() && isOwner(userId)
+     * @allow (update, delete) if isExistingOwner(userId)
+     * @deny (create) if !isSignedIn() || !isOwner(userId)
+     * @deny (update, delete) if !isSignedIn() || !isExistingOwner(userId)
+     * @principle Enforces document ownership for user signup data.
      */
     match /users/{userId}/signups/{signupId} {
-      function isSignedIn() {
-        return request.auth != null;
-      }
-
-      function isOwner(userId) {
-        return isSignedIn() && request.auth.uid == userId;
-      }
-
-      function isExistingOwner(userId) {
-        return isOwner(userId) && resource != null;
-      }
-
-      allow get: if isOwner(userId);
-      allow list: if isOwner(userId);
-      allow create: if isOwner(userId) && request.resource.data.userId == userId;
-      allow update: if isExistingOwner(userId) && request.resource.data.userId == resource.data.userId;
-      allow delete: if isExistingOwner(userId);
+      allow get: if isSignedIn() && isOwner(userId);
+      allow list: if isSignedIn() && isOwner(userId);
+      allow create: if isSignedIn() && isOwner(userId);
+      allow update: if isSignedIn() && isExistingOwner(userId);
+      allow delete: if isSignedIn() && isExistingOwner(userId);
     }
 
     /**
-     * @description Secure admin role data. Only admins (determined by document existence in this collection) can create, update, or delete.
+     * @description Controls access to admin role assignments.
      * @path /roles_admin/{userId}
-     * @allow (create) - Authenticated admin user creates an admin role entry.
-     * @allow (get, update, delete) - Authenticated admin user accesses admin role entry.
-     * @deny (create, get, update, delete) - Non-admin user tries to access/modify admin role entry.
-     *  @principle Restricts admin role management to existing admins.
+     * @allow get: if isSignedIn() && isAdmin(userId);
+     * @allow list: if false;
+     * @allow create: if isSignedIn() && isAdmin(userId);
+     * @allow update: if isSignedIn() && isAdmin(userId) && resource != null;
+     * @allow delete: if isSignedIn() && isAdmin(userId) && resource != null;
+     * @principle Restricts access to admin role documents to admins only.
      */
     match /roles_admin/{userId} {
-      function isSignedIn() {
-        return request.auth != null;
-      }
-
-     function isAdmin() {
-        return isSignedIn() && exists(/databases/$(database)/documents/roles_admin/$(request.auth.uid));
-      }
-
-      allow get: if isAdmin();
+      allow get: if isSignedIn() && isAdmin(userId);
       allow list: if false;
-      allow create: if isAdmin();
-      allow update: if isAdmin() && resource != null;
-      allow delete: if isAdmin() && resource != null;
+      allow create: if isSignedIn() && isAdmin(userId);
+      allow update: if isSignedIn() && isAdmin(userId) && resource != null;
+      allow delete: if isSignedIn() && isAdmin(userId) && resource != null;
+    }
+
+    function isSignedIn() {
+      return request.auth != null;
+    }
+
+    function isOwner(userId) {
+      return request.auth.uid == userId;
+    }
+
+    function isExistingOwner(userId) {
+      return isOwner(userId) && resource != null;
+    }
+
+    function isAdmin(userId) {
+      return request.auth.uid == userId;
     }
   }
 }

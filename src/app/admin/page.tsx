@@ -1,3 +1,4 @@
+
 'use client';
 
 import { Button } from '@/components/ui/button';
@@ -87,6 +88,20 @@ export default function AdminPage() {
       setIsLoggingIn(false);
       return;
     }
+    
+    // Hardcoded check for admin credentials
+    if (
+      values.email !== 'yogeshthakur9536@gmail.com' ||
+      values.password !== 'Learn@458'
+    ) {
+      toast({
+        variant: 'destructive',
+        title: 'Authentication Failed',
+        description: 'Invalid credentials. Please try again.',
+      });
+      setIsLoggingIn(false);
+      return;
+    }
 
     try {
       await signInWithEmailAndPassword(auth, values.email, values.password);
@@ -98,10 +113,11 @@ export default function AdminPage() {
       });
       router.refresh(); // Refresh to re-evaluate layout state
     } catch (error: any) {
+      // This will now primarily catch network errors or if the user is disabled in Firebase
       toast({
         variant: 'destructive',
         title: 'Authentication Failed',
-        description: 'Invalid credentials. Please try again.',
+        description: 'An error occurred during login. Please try again.',
       });
     } finally {
       setIsLoggingIn(false);

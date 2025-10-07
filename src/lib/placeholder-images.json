@@ -1,0 +1,94 @@
+{
+  "placeholderImages": [
+    {
+      "id": "course-1",
+      "description": "A computer screen with code on it.",
+      "imageUrl": "https://images.unsplash.com/photo-1565229284535-2cbbe3049123?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw3fHxwcm9ncmFtbWluZyUyMGNvZGV8ZW58MHx8fHwxNzU5Mzg3ODg4fDA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "programming code"
+    },
+    {
+      "id": "course-2",
+      "description": "A designer's desk with a tablet and sketches.",
+      "imageUrl": "https://images.unsplash.com/photo-1622128082634-1f9742839291?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw4fHxkZXNpZ24lMjBkZXNrfGVufDB8fHx8MTc1OTM4MzE5N3ww&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "design desk"
+    },
+    {
+      "id": "course-3",
+      "description": "A group of people in a business meeting.",
+      "imageUrl": "https://images.unsplash.com/photo-1616587656977-ac36a5a430bc?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwzfHxidXNpbmVzcyUyMG1lZXRpbmd8ZW58MHx8fHwxNzU5NDM2MTM5fDA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "business meeting"
+    },
+    {
+      "id": "course-4",
+      "description": "A person meditating outdoors by the sea.",
+      "imageUrl": "https://images.unsplash.com/photo-1590523741831-ab7e8b8f9c7f?w=800&q=80",
+      "imageHint": "meditation outdoors"
+    },
+    {
+      "id": "course-5",
+      "description": "A camera on a tripod.",
+      "imageUrl": "https://images.unsplash.com/photo-1634680582783-0b06ca18a449?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwxfHxjYW1lcmElMjB0cmlwb2R8ZW58MHx8fHwxNzU5NDk3NjkwfDA&ixlib.rb-4.1.0&q=80&w=1080",
+      "imageHint": "camera tripod"
+    },
+    {
+      "id": "course-6",
+      "description": "A person playing a guitar.",
+      "imageUrl": "https://images.unsplash.com/photo-1547357812-4a336d835928?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwxMHx8cGxheWluZyUyMGd1aXRhcnxlbnwwfHx8fDE3NTk0ODQyNDN8MA&ixlib.rb-4.1.0&q=80&w=1080",
+      "imageHint": "playing guitar"
+    },
+    {
+      "id": "course-7",
+      "description": "An abstract visualization of a neural network.",
+      "imageUrl": "https://images.unsplash.com/photo-1535223289827-42f1e9919769?w=800&q=80",
+      "imageHint": "AI neural"
+    },
+    {
+      "id": "course-8",
+      "description": "A person cooking a gourmet meal.",
+      "imageUrl": "https://images.unsplash.com/photo-1466637574441-749b8f19452f?w=800&q=80",
+      "imageHint": "gourmet cooking"
+    },
+    {
+      "id": "course-9",
+      "description": "A person painting on a canvas.",
+      "imageUrl": "https://images.unsplash.com/photo-1537884557178-342a575d7d16?w=800&q=80",
+      "imageHint": "painting canvas"
+    },
+    {
+      "id": "course-10",
+      "description": "An open book with a pen on it.",
+      "imageUrl": "https://images.unsplash.com/photo-1455390582262-044cdead277a?w=800&q=80",
+      "imageHint": "writing book"
+    },
+    {
+      "id": "course-11",
+      "description": "A person doing yoga.",
+      "imageUrl": "https://images.unsplash.com/photo-1544367567-0f2fcb009e0b?w=800&q=80",
+      "imageHint": "yoga pose"
+    },
+    {
+      "id": "course-12",
+      "description": "Stock market data on a screen.",
+      "imageUrl": "https://images.unsplash.com/photo-1611974789855-9c2a0a7236a3?w=800&q=80",
+      "imageHint": "stock market"
+    },
+    {
+      "id": "user-1",
+      "description": "Avatar of Sarah Lee.",
+      "imageUrl": "https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=100&q=80",
+      "imageHint": "woman portrait"
+    },
+    {
+      "id": "user-2",
+      "description": "Avatar of David Chen.",
+      "imageUrl": "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=100&q=80",
+      "imageHint": "man portrait"
+    },
+    {
+      "id": "user-3",
+      "description": "Avatar of Emily Rodriguez.",
+      "imageUrl": "https://images.unsplash.com/photo-1580489944761-15a19d654956?w=100&q=80",
+      "imageHint": "person smiling"
+    }
+  ]
+}

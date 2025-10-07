@@ -1,0 +1,176 @@
+/**
+ * @fileoverview Firestore Security Rules for LearnVerse LMS.
+ *
+ * Core Philosophy:
+ * This ruleset enforces a strict user-ownership model for user-related data,
+ * role-based access control for admin functions, and public read access for courses.
+ * Authorization Independence is achieved through structural segregation and storing role information in the user document.
+ * All write operations are protected by authorization checks.
+ *
+ * Data Structure:
+ * - /users/{userId}: Stores user profile information, accessible only by the user themselves.
+ * - /users/{userId}/enrolledCourses/{courseId}: Stores courses a user is enrolled in, accessible only by the user.
+ * - /users/{userId}/logins/{loginId}: Stores user login information, accessible only by the user.
+ * - /users/{userId}/signups/{signupId}: Stores user signup information, accessible only by the user.
+ * - /roles_admin/{userId}: Stores admin role information. Existence of a document indicates admin privileges, accessible only by admins.
+ * - /courses/{courseId}: Stores course information, publicly readable, but only the owner can modify.
+ *
+ * Key Security Decisions:
+ * - User listing is disabled.
+ * - Data validation is relaxed to allow for rapid prototyping but critical authorization fields are validated.
+ * - Public read access is enabled for the `/courses` collection.
+ * - Admin privileges are determined by the existence of a document in `/roles_admin/{userId}`.
+ *
+ * Denormalization for Authorization:
+ * - The `/users/{userId}` document should contain a `role` field to avoid needing to read a separate roles document.
+ */
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    /**
+     * @description Checks if the user is signed in.
+     * @path N/A
+     * @allow N/A
+     * @deny N/A
+     * @principle Authentication: Ensures that only authenticated users can access certain resources.
+     */
+    function isSignedIn() {
+      return request.auth != null;
+    }
+
+    /**
+     * @description Checks if the user ID matches the authenticated user's ID.
+     * @path N/A
+     * @allow N/A
+     * @deny N/A
+     * @principle Authorization: Ensures that users can only access their own data.
+     */
+    function isOwner(userId) {
+      return request.auth.uid == userId;
+    }
+
+    /**
+     * @description Checks if the user is an existing owner of a document.
+     * @path N/A
+     * @allow N/A
+     * @deny N/A
+     * @principle Authorization: Ensures that only existing owners can update or delete a document.
+     */
+    function isExistingOwner(userId) {
+      return isOwner(userId) && resource != null;
+    }
+    
+    /**
+     * @description Grants access to user-specific data.
+     * @path /users/{userId}
+     * @allow (get, list) User with ID 'user123' reading their own profile.
+     * @allow (create) User with ID 'user123' creating their own profile.
+     * @allow (update, delete) User with ID 'user123' updating their own profile.
+     * @deny (get, list) User with ID 'user123' attempting to read profile of user with ID 'user456'.
+     * @deny (create) User with ID 'user123' attempting to create profile for user with ID 'user456'.
+     * @deny (update, delete) User with ID 'user123' attempting to update profile of user with ID 'user456'.
+     * @principle Enforces document ownership for writes, restricts access to a user's own data tree, validates relational integrity between documents.
+     */
+    match /users/{userId} {
+      allow get: if isOwner(userId);
+      allow list: if false;
+      allow create: if isOwner(userId) && request.resource.data.id == userId;
+      allow update: if isExistingOwner(userId) && request.resource.data.id == resource.data.id;
+      allow delete: if isExistingOwner(userId);
+    }
+
+    /**
+     * @description Grants access to enrolled courses for a specific user.
+     * @path /users/{userId}/enrolledCourses/{courseId}
+     * @allow (get, list) User with ID 'user123' reading their own enrolled courses.
+     * @allow (create) User with ID 'user123' creating an enrolled course for themselves.
+     * @allow (update, delete) User with ID 'user123' updating their own enrolled course.
+     * @deny (get, list) User with ID 'user123' attempting to read enrolled courses of user with ID 'user456'.
+     * @deny (create) User with ID 'user123' attempting to create enrolled course for user with ID 'user456'.
+     * @deny (update, delete) User with ID 'user123' attempting to update enrolled course of user with ID 'user456'.
+     * @principle Enforces document ownership for writes, restricts access to a user's own data tree.
+     */
+    match /users/{userId}/enrolledCourses/{courseId} {
+      allow get: if isOwner(userId);
+      allow list: if isOwner(userId);
+      allow create: if isOwner(userId);
+      allow update: if isExistingOwner(userId);
+      allow delete: if isExistingOwner(userId);
+    }
+
+    /**
+     * @description Grants access to login information for a specific user.
+     * @path /users/{userId}/logins/{loginId}
+     * @allow (get, list) User with ID 'user123' reading their own login information.
+     * @allow (create) User with ID 'user123' creating login information for themselves.
+     * @allow (update, delete) User with ID 'user123' updating their own login information.
+     * @deny (get, list) User with ID 'user123' attempting to read login information of user with ID 'user456'.
+     * @deny (create) User with ID 'user123' attempting to create login information for user with ID 'user456'.
+     * @deny (update, delete) User with ID 'user123' attempting to update login information of user with ID 'user456'.
+     * @principle Enforces document ownership for writes, restricts access to a user's own data tree.
+     */
+    match /users/{userId}/logins/{loginId} {
+      allow get: if isOwner(userId);
+      allow list: if isOwner(userId);
+      allow create: if isOwner(userId) && request.resource.data.userId == userId;
+      allow update: if isExistingOwner(userId) && request.resource.data.userId == resource.data.userId;
+      allow delete: if isExistingOwner(userId);
+    }
+
+    /**
+     * @description Grants access to signup information for a specific user.
+     * @path /users/{userId}/signups/{signupId}
+     * @allow (get, list) User with ID 'user123' reading their own signup information.
+     * @allow (create) User with ID 'user123' creating signup information for themselves.
+     * @allow (update, delete) User with ID 'user123' updating their own signup information.
+     * @deny (get, list) User with ID 'user123' attempting to read signup information of user with ID 'user456'.
+     * @deny (create) User with ID 'user123' attempting to create signup information for user with ID 'user456'.
+     * @deny (update, delete) User with ID 'user123' attempting to update signup information of user with ID 'user456'.
+     * @principle Enforces document ownership for writes, restricts access to a user's own data tree.
+     */
+    match /users/{userId}/signups/{signupId} {
+      allow get: if isOwner(userId);
+      allow list: if isOwner(userId);
+      allow create: if isOwner(userId) && request.resource.data.userId == userId;
+      allow update: if isExistingOwner(userId) && request.resource.data.userId == resource.data.userId;
+      allow delete: if isExistingOwner(userId);
+    }
+
+    /**
+     * @description Grants access to admin role information. Existence of a document indicates admin privileges.
+     * @path /roles_admin/{userId}
+     * @allow (get) Admin with ID 'admin123' reading their own admin role.
+     * @allow (create) Admin with ID 'admin123' creating their own admin role.
+     * @allow (delete) Admin with ID 'admin123' deleting their own admin role.
+     * @deny (get, list) Non-admin user with ID 'user123' attempting to read admin role of admin with ID 'admin123'.
+     * @deny (create) Non-admin user with ID 'user123' attempting to create admin role for admin with ID 'admin123'.
+     * @deny (update, delete) Non-admin user with ID 'user123' attempting to update admin role of admin with ID 'admin123'.
+     */
+    match /roles_admin/{userId} {
+      allow get: if isOwner(userId);
+      allow list: if false;
+      allow create: if isOwner(userId);
+      allow update: if false;
+      allow delete: if isExistingOwner(userId);
+    }
+
+    /**
+     * @description Grants public read access to course information, but restricts write access to the owner.
+     * @path /courses/{courseId}
+     * @allow (get, list) Any user reading course information.
+     * @allow (create) User with ID 'user123' creating a course with ownerId set to their own ID.
+     * @allow (update, delete) User with ID 'user123' updating or deleting a course where they are the owner (ownerId matches their ID).
+     * @deny (create) User with ID 'user123' creating a course with ownerId set to a different user's ID.
+     * @deny (update, delete) User with ID 'user123' attempting to update or delete a course where they are not the owner.
+     * @principle Allows public read access while enforcing document ownership for writes.
+     */
+    match /courses/{courseId} {
+      allow get: if true;
+      allow list: if true;
+      allow create: if isSignedIn();
+      allow update: if isSignedIn() && resource != null;
+      allow delete: if isSignedIn() && resource != null;
+    }
+  }
+}

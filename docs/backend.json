@@ -1,0 +1,287 @@
+
+{
+  "entities": {
+    "User": {
+      "$schema": "http://json-schema.org/draft-07/schema#",
+      "title": "User",
+      "type": "object",
+      "description": "Represents a user of the LearnVerse platform.",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Unique identifier for the User entity."
+        },
+        "email": {
+          "type": "string",
+          "description": "Email address of the user.",
+          "format": "email"
+        },
+        "fullName": {
+          "type": "string",
+          "description": "The user's full name."
+        },
+        "role": {
+          "type": "string",
+          "description": "Role of the user (e.g., Admin, Instructor, Student)."
+        },
+        "createdAt": {
+          "type": "string",
+          "description": "Timestamp indicating when the user account was created.",
+          "format": "date-time"
+        },
+        "updatedAt": {
+          "type": "string",
+          "description": "Timestamp indicating when the user account was last updated.",
+          "format": "date-time"
+        }
+      },
+      "required": [
+        "id",
+        "email",
+        "fullName",
+        "role",
+        "createdAt",
+        "updatedAt"
+      ]
+    },
+    "Login": {
+      "$schema": "http://json-schema.org/draft-07/schema#",
+      "title": "Login",
+      "type": "object",
+      "description": "Represents the login information for a user.",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Unique identifier for the Login entity."
+        },
+        "userId": {
+          "type": "string",
+          "description": "Reference to User. (Relationship: User 1:1 Login)"
+        },
+        "lastLogin": {
+          "type": "string",
+          "description": "Timestamp indicating the last login time.",
+          "format": "date-time"
+        },
+        "loginCount": {
+          "type": "number",
+          "description": "The number of times the user has logged in."
+        }
+      },
+      "required": [
+        "id",
+        "userId",
+        "lastLogin",
+        "loginCount"
+      ]
+    },
+    "Signup": {
+      "$schema": "http://json-schema.org/draft-07/schema#",
+      "title": "Signup",
+      "type": "object",
+      "description": "Represents the signup information for a user.",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Unique identifier for the Signup entity."
+        },
+        "userId": {
+          "type": "string",
+          "description": "Reference to User. (Relationship: User 1:1 Signup)"
+        },
+        "signupDate": {
+          "type": "string",
+          "description": "Timestamp indicating the signup time.",
+          "format": "date-time"
+        },
+        "signupMethod": {
+          "type": "string",
+          "description": "The method used to signup (e.g., email, social media)."
+        }
+      },
+      "required": [
+        "id",
+        "userId",
+        "signupDate",
+        "signupMethod"
+      ]
+    },
+    "Course": {
+      "$schema": "http://json-schema.org/draft-07/schema#",
+      "title": "Course",
+      "type": "object",
+      "description": "Represents a course on the LearnVerse platform.",
+      "properties": {
+        "title": { "type": "string" },
+        "description": { "type": "string" },
+        "summary": { "type": "string" },
+        "instructorId": { "type": "string" },
+        "instructorName": { "type": "string" },
+        "instructorAvatar": { "type": "string" },
+        "category": { "type": "string" },
+        "level": { "type": "string" },
+        "price": { "type": "number" },
+        "language": { "type": "string" },
+        "imageUrl": { "type": "string" },
+        "imageHint": { "type": "string" },
+        "createdAt": { "type": "string", "format": "date-time" },
+        "updatedAt": { "type": "string", "format": "date-time" },
+        "curriculum": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "title": { "type": "string" },
+              "lessons": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "title": { "type": "string" },
+                    "videoUrl": { "type": "string", "format": "uri" }
+                  },
+                  "required": ["title", "videoUrl"]
+                }
+              }
+            },
+            "required": ["title", "lessons"]
+          }
+        }
+      },
+      "required": ["title", "description", "summary", "instructorId", "instructorName", "category", "level", "price", "language", "createdAt", "updatedAt"]
+    },
+    "EnrolledCourse": {
+      "$schema": "http://json-schema.org/draft-07/schema#",
+      "title": "EnrolledCourse",
+      "type": "object",
+      "description": "Represents a course a user is enrolled in.",
+      "properties": {
+        "courseId": { "type": "string" },
+        "enrolledAt": { "type": "string", "format": "date-time" },
+        "progress": { "type": "number" },
+        "completed": { "type": "boolean" },
+        "rated": { "type": "number" }
+      },
+      "required": ["courseId", "enrolledAt", "progress", "completed"]
+    }
+  },
+  "auth": {
+    "providers": [
+      "password",
+      "anonymous"
+    ]
+  },
+  "firestore": {
+    "structure": [
+      {
+        "path": "/users/{userId}",
+        "definition": {
+          "entityName": "User",
+          "schema": {
+            "$ref": "#/backend/entities/User"
+          },
+          "description": "Stores user profile information. Includes denormalized role data for authorization independence.",
+          "params": [
+            {
+              "name": "userId",
+              "description": "The unique identifier for the user."
+            }
+          ]
+        }
+      },
+      {
+        "path": "/users/{userId}/enrolledCourses/{courseId}",
+        "definition": {
+          "entityName": "EnrolledCourse",
+          "schema": {
+            "$ref": "#/backend/entities/EnrolledCourse"
+          },
+          "description": "Stores courses a user is enrolled in.",
+          "params": [
+            {
+              "name": "userId",
+              "description": "The unique identifier for the user."
+            },
+            {
+              "name": "courseId",
+              "description": "The unique identifier for the course."
+            }
+          ]
+        }
+      },
+      {
+        "path": "/users/{userId}/logins/{loginId}",
+        "definition": {
+          "entityName": "Login",
+          "schema": {
+            "$ref": "#/backend/entities/Login"
+          },
+          "description": "Stores user login information. (Relationship: User 1:1 Login)",
+          "params": [
+            {
+              "name": "userId",
+              "description": "The unique identifier for the user."
+            },
+            {
+              "name": "loginId",
+              "description": "The unique identifier for the login entry."
+            }
+          ]
+        }
+      },
+      {
+        "path": "/users/{userId}/signups/{signupId}",
+        "definition": {
+          "entityName": "Signup",
+          "schema": {
+            "$ref": "#/backend/entities/Signup"
+          },
+          "description": "Stores user signup information. (Relationship: User 1:1 Signup)",
+          "params": [
+            {
+              "name": "userId",
+              "description": "The unique identifier for the user."
+            },
+            {
+              "name": "signupId",
+              "description": "The unique identifier for the signup entry."
+            }
+          ]
+        }
+      },
+      {
+        "path": "/roles_admin/{userId}",
+        "definition": {
+          "entityName": "User",
+          "schema": {
+            "$ref": "#/backend/entities/User"
+          },
+          "description": "Collection used to store admin roles. Existence of a document indicates admin privileges. No content required.",
+          "params": [
+            {
+              "name": "userId",
+              "description": "The unique identifier for the admin user."
+            }
+          ]
+        }
+      },
+      {
+        "path": "/courses/{courseId}",
+        "definition": {
+            "entityName": "Course",
+            "schema": {
+                "$ref": "#/backend/entities/Course"
+            },
+            "description": "Stores course information.",
+            "params": [
+                {
+                    "name": "courseId",
+                    "description": "The unique identifier for the course."
+                }
+            ]
+        }
+      }
+    ],
+    "reasoning": "This Firestore structure is designed to support the LearnVerse LMS application, focusing on user management, authentication, and role-based access control. It prioritizes Authorization Independence by avoiding hierarchical `get()` calls in security rules through denormalization. The structure is segregated to maintain a homogeneous security posture within each collection. Access modeling follows consistent patterns for private and collaborative data, ensuring clear authorization intent and easy debuggability.\n\nAuthorization Independence is achieved primarily through path-based ownership for user-related data (e.g., logins, signups) and by storing role information directly within the user document.  This avoids the need to fetch user roles from a separate document when enforcing security rules on user data.  For the LearnVerse application, this will extend to any user-owned content (e.g., courses they create, reviews they submit, etc.)\n\nQAPs (Rules are not Filters) are supported through structural segregation. User-owned content is placed under `/users/{userId}` collections, ensuring that listing operations can be securely filtered by user ID without requiring complex rule logic. Collections like `/roles_admin/{uid}` enable secure checks for administrative privileges. Segregation ensures all documents share the same security requirements."
+  }
+}

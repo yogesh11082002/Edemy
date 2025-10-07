@@ -101,7 +101,7 @@ export default function CourseDetailPage() {
     return videoId;
   };
   
-  const handlePreviewClick = (videoUrl: string) => {
+  const handlePlayClick = (videoUrl: string) => {
     const videoId = extractVideoId(videoUrl);
     if(videoId) {
         setActiveVideoUrl(`https://www.youtube.com/embed/${videoId}`);
@@ -171,7 +171,7 @@ export default function CourseDetailPage() {
                   data-ai-hint={course.imageHint}
                 />
                  <div
-                  onClick={() => handlePreviewClick(course.curriculum?.[0]?.lessons?.[0]?.videoUrl || '')}
+                  onClick={() => handlePlayClick(course.curriculum?.[0]?.lessons?.[0]?.videoUrl || '')}
                   className="absolute inset-0 bg-black/40 flex items-center justify-center cursor-pointer opacity-0 group-hover:opacity-100 transition-opacity"
                 >
                   <Button
@@ -272,7 +272,7 @@ export default function CourseDetailPage() {
                                                     <span>{lesson.title}</span>
                                                 </div>
                                                  {(isEnrolled || index === 0) && (
-                                                    <Button variant="ghost" size="sm" onClick={() => handlePreviewClick(lesson.videoUrl)}>
+                                                    <Button variant="ghost" size="sm" onClick={() => handlePlayClick(lesson.videoUrl)}>
                                                         {isEnrolled ? 'Play' : 'Preview'}
                                                     </Button>
                                                  )}
@@ -364,7 +364,7 @@ export default function CourseDetailPage() {
                   data-ai-hint={course.imageHint}
                 />
                  <div
-                  onClick={() => handlePreviewClick(course.curriculum?.[0]?.lessons?.[0]?.videoUrl || '')}
+                  onClick={() => handlePlayClick(course.curriculum?.[0]?.lessons?.[0]?.videoUrl || '')}
                   className="absolute inset-0 bg-black/40 flex items-center justify-center cursor-pointer opacity-0 group-hover:opacity-100 transition-opacity"
                 >
                   <Button

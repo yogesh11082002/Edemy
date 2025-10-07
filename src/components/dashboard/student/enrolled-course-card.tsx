@@ -1,3 +1,4 @@
+
 'use client';
 import { Course } from '@/lib/types';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';

@@ -28,6 +28,7 @@ import { Course } from '@/lib/types';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Sheet, SheetContent, SheetTrigger } from '../ui/sheet';
 import { Filter } from 'lucide-react';
+import { cn } from '@/lib/utils';
 
 function Filters({ isMobile = false }: { isMobile?: boolean }) {
   const [selectedCategory, setSelectedCategory] = useState('all');

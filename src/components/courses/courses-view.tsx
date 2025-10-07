@@ -1,7 +1,7 @@
 
 "use client";
 
-import { useState, useMemo } from 'react';
+import { useState, useMemo, Suspense } from 'react';
 import { useSearchParams } from 'next/navigation';
 import { CourseCard } from "@/components/courses/course-card";
 import { categories, levels, languages } from "@/lib/placeholder-data";

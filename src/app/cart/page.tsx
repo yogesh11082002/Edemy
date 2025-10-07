@@ -20,6 +20,7 @@ import { useFirestore, useUser, errorEmitter, FirestorePermissionError } from '@
 import { collection, doc, getDoc, writeBatch, increment, getDocs, query, where } from 'firebase/firestore';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
+import { useRouter } from 'next/navigation';
 
 export default function CartPage() {
   const [cartItems, setCartItems] = useState<Course[]>([]);
@@ -28,6 +29,7 @@ export default function CartPage() {
   const { toast } = useToast();
   const firestore = useFirestore();
   const { user } = useUser();
+  const router = useRouter();
 
   useEffect(() => {
     const fetchCartItems = async () => {
@@ -116,7 +118,8 @@ export default function CartPage() {
         courseId: item.id,
         enrolledAt: new Date().toISOString(),
         progress: 0,
-        completed: false
+        completed: false,
+        watchedLessons: [],
       };
       batch.set(enrolledCourseRef, enrolledCourseData);
       enrollmentData[enrolledCourseRef.path] = enrolledCourseData;
@@ -133,10 +136,11 @@ export default function CartPage() {
       .then(() => {
           toast({
               title: 'Checkout Successful!',
-              description: 'Your new courses are available in your dashboard.',
+              description: 'Redirecting to your dashboard...',
           });
           setCartItems([]);
           localStorage.removeItem('edemy-cart');
+          router.push('/dashboard/student');
       })
       .catch((serverError) => {
           const permissionError = new FirestorePermissionError({

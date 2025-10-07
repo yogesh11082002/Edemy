@@ -29,9 +29,9 @@ import {
 import Link from 'next/link';
 import { useState, useEffect, useMemo } from 'react';
 import { useRouter } from 'next/navigation';
-import type { Course, EnrolledCourse } from '@/lib/types';
+import type { Course, EnrolledCourse, Lesson } from '@/lib/types';
 import { useDoc, useFirestore, useMemoFirebase, useUser } from '@/firebase';
-import { collection, doc } from 'firebase/firestore';
+import { collection, doc, updateDoc, arrayUnion } from 'firebase/firestore';
 
 export default function CourseDetailPage() {
   const params = useParams<{ courseId: string }>();
@@ -100,20 +100,33 @@ export default function CourseDetailPage() {
     }
     return videoId;
   };
-  
-  const handlePlayClick = (videoUrl: string) => {
-    const videoId = extractVideoId(videoUrl);
-    if(videoId) {
-        setActiveVideoUrl(`https://www.youtube.com/embed/${videoId}`);
-        setShowVideo(true);
-    } else {
-        toast({
-            variant: 'destructive',
-            title: 'Invalid Video URL',
-            description: 'The provided URL is not a valid YouTube video.',
+
+  const handlePlayClick = async (lesson: Lesson) => {
+    const videoId = extractVideoId(lesson.videoUrl);
+    if (videoId) {
+      setActiveVideoUrl(`https://www.youtube.com/embed/${videoId}`);
+      setShowVideo(true);
+
+      // Track progress if enrolled and the lesson hasn't been watched yet
+      if (isEnrolled && enrollmentRef && enrollment && !enrollment.watchedLessons?.includes(lesson.title)) {
+        const totalLessons = course?.curriculum?.reduce((acc, section) => acc + section.lessons.length, 0) || 1;
+        const newWatchedLessons = [...(enrollment.watchedLessons || []), lesson.title];
+        const newProgress = Math.round((newWatchedLessons.length / totalLessons) * 100);
+
+        await updateDoc(enrollmentRef, {
+          watchedLessons: arrayUnion(lesson.title),
+          progress: newProgress,
         });
+      }
+    } else {
+      toast({
+        variant: 'destructive',
+        title: 'Invalid Video URL',
+        description: 'The provided URL is not a valid YouTube video.',
+      });
     }
   };
+  
 
   if (courseLoading || enrollmentLoading || !course) {
     return (
@@ -171,7 +184,7 @@ export default function CourseDetailPage() {
                   data-ai-hint={course.imageHint}
                 />
                  <div
-                  onClick={() => handlePlayClick(course.curriculum?.[0]?.lessons?.[0]?.videoUrl || '')}
+                  onClick={() => handlePlayClick(course.curriculum?.[0]?.lessons?.[0] || { title: '', videoUrl: '' })}
                   className="absolute inset-0 bg-black/40 flex items-center justify-center cursor-pointer opacity-0 group-hover:opacity-100 transition-opacity"
                 >
                   <Button
@@ -272,7 +285,7 @@ export default function CourseDetailPage() {
                                                     <span>{lesson.title}</span>
                                                 </div>
                                                  {(isEnrolled || index === 0) && (
-                                                    <Button variant="ghost" size="sm" onClick={() => handlePlayClick(lesson.videoUrl)}>
+                                                    <Button variant="ghost" size="sm" onClick={() => handlePlayClick(lesson)}>
                                                         {isEnrolled ? 'Play' : 'Preview'}
                                                     </Button>
                                                  )}
@@ -364,7 +377,7 @@ export default function CourseDetailPage() {
                   data-ai-hint={course.imageHint}
                 />
                  <div
-                  onClick={() => handlePlayClick(course.curriculum?.[0]?.lessons?.[0]?.videoUrl || '')}
+                  onClick={() => handlePlayClick(course.curriculum?.[0]?.lessons?.[0] || { title: '', videoUrl: '' })}
                   className="absolute inset-0 bg-black/40 flex items-center justify-center cursor-pointer opacity-0 group-hover:opacity-100 transition-opacity"
                 >
                   <Button

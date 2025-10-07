@@ -75,4 +75,5 @@ export type EnrolledCourse = {
     progress: number;
     completed: boolean;
     rated?: number;
+    watchedLessons?: string[];
 }

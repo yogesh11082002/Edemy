@@ -1,4 +1,5 @@
 
+
 'use client';
 
 import { Button } from '@/components/ui/button';
@@ -8,15 +9,18 @@ import {
   CardHeader,
   CardTitle,
   CardFooter,
+  CardDescription
 } from '@/components/ui/card';
 import { useToast } from '@/hooks/use-toast';
 import { Course } from '@/lib/types';
-import { Trash2 } from 'lucide-react';
+import { Trash2, CreditCard } from 'lucide-react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { useState, useEffect } from 'react';
 import { useFirestore, useUser, errorEmitter, FirestorePermissionError } from '@/firebase';
 import { collection, doc, getDoc, writeBatch, increment, getDocs, query, where } from 'firebase/firestore';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
 
 export default function CartPage() {
   const [cartItems, setCartItems] = useState<Course[]>([]);
@@ -234,16 +238,34 @@ export default function CartPage() {
                   Summary
                 </CardTitle>
               </CardHeader>
-              <CardContent>
-                <div className="flex justify-between items-center mb-4">
+              <CardContent className="space-y-6">
+                <div className="flex justify-between items-center">
                   <span className="text-muted-foreground">Subtotal</span>
                   <span className="font-bold text-xl">
                     ${subtotal.toFixed(2)}
                   </span>
                 </div>
-                <p className="text-sm text-muted-foreground">
-                  Taxes calculated at checkout.
-                </p>
+                <div className="space-y-4">
+                    <CardTitle className="text-xl font-headline">Payment Method</CardTitle>
+                    <CardDescription>This is a demo. No real payment will be processed.</CardDescription>
+                     <div className="space-y-2">
+                        <Label htmlFor="card-number">Card Number</Label>
+                        <div className="relative">
+                            <Input id="card-number" placeholder="**** **** **** 1234" disabled />
+                            <CreditCard className="absolute right-3 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />
+                        </div>
+                    </div>
+                    <div className="grid grid-cols-2 gap-4">
+                        <div className="space-y-2">
+                            <Label htmlFor="expiry">Expiry</Label>
+                            <Input id="expiry" placeholder="MM/YY" disabled />
+                        </div>
+                        <div className="space-y-2">
+                            <Label htmlFor="cvc">CVC</Label>
+                            <Input id="cvc" placeholder="123" disabled />
+                        </div>
+                    </div>
+                </div>
               </CardContent>
               <CardFooter>
                 <Button
@@ -252,7 +274,7 @@ export default function CartPage() {
                   onClick={handleCheckout}
                   disabled={isCheckingOut}
                 >
-                  {isCheckingOut ? 'Processing...' : 'Checkout'}
+                  {isCheckingOut ? 'Processing...' : 'Complete Purchase'}
                 </Button>
               </CardFooter>
             </Card>

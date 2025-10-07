@@ -1,4 +1,5 @@
 
+
 "use client";
 
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -107,7 +108,7 @@ export function CreateCourseForm() {
     
     startTransition(async () => {
       try {
-        const imageUrl = `https://source.unsplash.com/800x600/?${encodeURIComponent(values.category)}`;
+        const imageUrl = `https://picsum.photos/seed/${Math.random()}/800/600`;
         const randomRating = Math.random() * (4.5 - 4.0) + 4.0;
         const randomReviewCount = Math.floor(Math.random() * (1500 - 200 + 1) + 200);
 

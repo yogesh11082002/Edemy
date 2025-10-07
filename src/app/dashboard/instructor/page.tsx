@@ -11,12 +11,20 @@ import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel,
 import { useCollection, useFirestore, useUser, useMemoFirebase } from '@/firebase';
 import { collection, query, where } from 'firebase/firestore';
 import { Course } from '@/lib/types';
-import { useMemo } from 'react';
+import { useMemo, useEffect } from 'react';
+import { useRouter } from 'next/navigation';
 
 
 export default function InstructorDashboardPage() {
-    const { user } = useUser();
+    const { user, isUserLoading } = useUser();
+    const router = useRouter();
     const firestore = useFirestore();
+
+    useEffect(() => {
+        if (!isUserLoading && !user) {
+            router.push('/login');
+        }
+    }, [user, isUserLoading, router]);
 
     const coursesQuery = useMemoFirebase(() => {
         if (!user) return null;
@@ -49,6 +57,10 @@ export default function InstructorDashboardPage() {
         }
 
     }, [instructorCourses]);
+
+    if (isUserLoading || !user) {
+        return <div className="text-center py-12">Loading instructor dashboard...</div>;
+    }
     
   return (
     <div className="space-y-8">

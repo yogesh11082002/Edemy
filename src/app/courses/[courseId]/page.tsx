@@ -1,4 +1,5 @@
 
+
 'use client';
 
 import { reviews } from '@/lib/placeholder-data';
@@ -18,21 +19,19 @@ import { useToast } from '@/hooks/use-toast';
 import {
   CheckCircle,
   Clock,
-  Film,
   Globe,
   Play,
   Star,
   User,
-  Users,
   Video,
   X,
 } from 'lucide-react';
 import Link from 'next/link';
 import { useState, useEffect, useMemo } from 'react';
 import { useRouter } from 'next/navigation';
-import type { Course } from '@/lib/types';
-import { useDoc, useFirestore, useMemoFirebase } from '@/firebase';
-import { doc } from 'firebase/firestore';
+import type { Course, EnrolledCourse } from '@/lib/types';
+import { useDoc, useFirestore, useMemoFirebase, useUser } from '@/firebase';
+import { collection, doc } from 'firebase/firestore';
 
 export default function CourseDetailPage() {
   const params = useParams<{ courseId: string }>();
@@ -40,11 +39,21 @@ export default function CourseDetailPage() {
   const { toast } = useToast();
   const [showVideo, setShowVideo] = useState(false);
   const [activeVideoUrl, setActiveVideoUrl] = useState<string | null>(null);
-
+  const { user } = useUser();
 
   const firestore = useFirestore();
   const courseRef = useMemoFirebase(() => doc(firestore, 'courses', params.courseId as string), [firestore, params.courseId]);
   const { data: course, isLoading: courseLoading } = useDoc<Course>(courseRef);
+
+  const enrollmentRef = useMemoFirebase(() => {
+    if (user && params.courseId) {
+      return doc(collection(firestore, 'users', user.uid, 'enrolledCourses'), params.courseId as string);
+    }
+    return null;
+  }, [firestore, user, params.courseId]);
+
+  const { data: enrollment, isLoading: enrollmentLoading } = useDoc<EnrolledCourse>(enrollmentRef);
+  const isEnrolled = !!enrollment;
 
   useEffect(() => {
     // Set the initial video to the first lesson of the first section if available
@@ -73,18 +82,23 @@ export default function CourseDetailPage() {
 
   const extractVideoId = (url: string) => {
     if (!url) return null;
+    let videoId = null;
     try {
       const urlObj = new URL(url);
-      if (urlObj.hostname === "youtu.be") {
-        return urlObj.pathname.slice(1);
-      } else if (urlObj.hostname.includes("youtube.com")) {
-        return urlObj.searchParams.get("v");
+      if (urlObj.hostname === 'youtu.be') {
+        videoId = urlObj.pathname.slice(1);
+      } else if (urlObj.hostname.includes('youtube.com')) {
+        videoId = urlObj.searchParams.get('v');
+      }
+      // Strip any extra params from youtu.be links
+      if (videoId) {
+        return videoId.split('?')[0];
       }
     } catch (e) {
-      console.error("Invalid video URL", e);
+      console.error('Invalid video URL', e);
       return null;
     }
-    return null;
+    return videoId;
   };
   
   const handlePreviewClick = (videoUrl: string) => {
@@ -101,7 +115,7 @@ export default function CourseDetailPage() {
     }
   };
 
-  if (courseLoading || !course) {
+  if (courseLoading || enrollmentLoading || !course) {
     return (
       <div className="container mx-auto px-4 md:px-6 py-12 text-center">
         Loading...
@@ -146,7 +160,7 @@ export default function CourseDetailPage() {
         <div className="grid lg:grid-cols-3 lg:gap-12">
           {/* Sidebar (moved up for mobile) */}
           <aside className="lg:hidden mb-8">
-            <Card>
+             <Card className="sticky top-24">
               <div className="relative group">
                 <Image
                   src={course.imageUrl}
@@ -170,26 +184,37 @@ export default function CourseDetailPage() {
                 </div>
               </div>
               <CardContent className="p-6 space-y-4">
-                <span className="text-3xl font-bold text-primary">
-                  ${course.price}
-                </span>
-                <div className="flex flex-col gap-2">
-                  <Button
-                    size="lg"
-                    className="w-full bg-gradient-primary-accent text-primary-foreground"
-                    onClick={handleEnrollNow}
-                  >
-                    Enroll Now
-                  </Button>
-                  <Button
-                    size="lg"
-                    variant="outline"
-                    className="w-full"
-                    onClick={handleAddToCart}
-                  >
-                    Add to Cart
-                  </Button>
-                </div>
+                { isEnrolled ? (
+                  <>
+                     <Button size="lg" className="w-full" asChild>
+                      <Link href="/dashboard/student">Go to Dashboard</Link>
+                    </Button>
+                    <p className="text-sm text-center text-muted-foreground">You are enrolled in this course.</p>
+                  </>
+                ) : (
+                  <>
+                    <span className="text-3xl font-bold text-primary">
+                      ${course.price}
+                    </span>
+                    <div className="flex flex-col gap-2">
+                      <Button
+                        size="lg"
+                        className="w-full bg-gradient-primary-accent text-primary-foreground"
+                        onClick={handleEnrollNow}
+                      >
+                        Enroll Now
+                      </Button>
+                      <Button
+                        size="lg"
+                        variant="outline"
+                        className="w-full"
+                        onClick={handleAddToCart}
+                      >
+                        Add to Cart
+                      </Button>
+                    </div>
+                  </>
+                )}
                 <div className="space-y-3 text-sm pt-4">
                   <h4 className="font-semibold">This course includes:</h4>
                   <div className="flex items-center gap-2">
@@ -246,9 +271,9 @@ export default function CourseDetailPage() {
                                                     <Video className="h-5 w-5 text-muted-foreground" />
                                                     <span>{lesson.title}</span>
                                                 </div>
-                                                 {index === 0 && (
+                                                 {(isEnrolled || index === 0) && (
                                                     <Button variant="ghost" size="sm" onClick={() => handlePreviewClick(lesson.videoUrl)}>
-                                                        Preview
+                                                        {isEnrolled ? 'Play' : 'Preview'}
                                                     </Button>
                                                  )}
                                             </li>
@@ -352,26 +377,37 @@ export default function CourseDetailPage() {
                 </div>
               </div>
               <CardContent className="p-6 space-y-4">
-                <span className="text-3xl font-bold text-primary">
-                  ${course.price}
-                </span>
-                <div className="flex flex-col sm:flex-row gap-2">
-                  <Button
-                    size="lg"
-                    className="w-full bg-gradient-primary-accent text-primary-foreground"
-                    onClick={handleEnrollNow}
-                  >
-                    Enroll Now
-                  </Button>
-                  <Button
-                    size="lg"
-                    variant="outline"
-                    className="w-full"
-                    onClick={handleAddToCart}
-                  >
-                    Add to Cart
-                  </Button>
-                </div>
+                 { isEnrolled ? (
+                   <>
+                     <Button size="lg" className="w-full" asChild>
+                      <Link href="/dashboard/student">Go to Dashboard</Link>
+                    </Button>
+                    <p className="text-sm text-center text-muted-foreground">You are enrolled in this course.</p>
+                   </>
+                 ) : (
+                   <>
+                      <span className="text-3xl font-bold text-primary">
+                        ${course.price}
+                      </span>
+                      <div className="flex flex-col sm:flex-row gap-2">
+                        <Button
+                          size="lg"
+                          className="w-full bg-gradient-primary-accent text-primary-foreground"
+                          onClick={handleEnrollNow}
+                        >
+                          Enroll Now
+                        </Button>
+                        <Button
+                          size="lg"
+                          variant="outline"
+                          className="w-full"
+                          onClick={handleAddToCart}
+                        >
+                          Add to Cart
+                        </Button>
+                      </div>
+                   </>
+                 )}
                 <div className="space-y-3 text-sm pt-4">
                   <h4 className="font-semibold">This course includes:</h4>
                   <div className="flex items-center gap-2">

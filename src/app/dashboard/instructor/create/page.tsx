@@ -1,7 +1,25 @@
+
+'use client';
 import { CreateCourseForm } from "@/components/dashboard/instructor/create-course-form";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { useUser } from "@/firebase";
+import { useRouter } from "next/navigation";
+import { useEffect } from "react";
 
 export default function CreateCoursePage() {
+    const { user, isUserLoading } = useUser();
+    const router = useRouter();
+
+    useEffect(() => {
+        if (!isUserLoading && !user) {
+            router.push('/login');
+        }
+    }, [user, isUserLoading, router]);
+
+    if (isUserLoading || !user) {
+        return <div className="text-center py-12">Loading...</div>;
+    }
+
     return (
         <div>
             <Card>

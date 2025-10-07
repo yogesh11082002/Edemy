@@ -31,6 +31,15 @@ export default function CartPage() {
   const { user } = useUser();
   const router = useRouter();
 
+  const [paymentDetails, setPaymentDetails] = useState({
+    cardNumber: '',
+    expiry: '',
+    cvc: '',
+  });
+  
+  const isPaymentFormValid = paymentDetails.cardNumber.trim() !== '' && paymentDetails.expiry.trim() !== '' && paymentDetails.cvc.trim() !== '';
+
+
   useEffect(() => {
     const fetchCartItems = async () => {
       if (!firestore) return;
@@ -156,6 +165,11 @@ export default function CartPage() {
       });
   };
 
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = e.target;
+    setPaymentDetails(prev => ({ ...prev, [name]: value }));
+  }
+
   const subtotal = cartItems.reduce((acc, item) => acc + item.price, 0);
 
   if (isLoading) {
@@ -254,18 +268,18 @@ export default function CartPage() {
                      <div className="space-y-2">
                         <Label htmlFor="card-number">Card Number</Label>
                         <div className="relative">
-                            <Input id="card-number" placeholder="**** **** **** 1234" />
+                            <Input id="card-number" name="cardNumber" placeholder="**** **** **** 1234" value={paymentDetails.cardNumber} onChange={handleInputChange} required />
                             <CreditCard className="absolute right-3 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />
                         </div>
                     </div>
                     <div className="grid grid-cols-2 gap-4">
                         <div className="space-y-2">
                             <Label htmlFor="expiry">Expiry</Label>
-                            <Input id="expiry" placeholder="MM/YY" />
+                            <Input id="expiry" name="expiry" placeholder="MM/YY" value={paymentDetails.expiry} onChange={handleInputChange} required />
                         </div>
                         <div className="space-y-2">
                             <Label htmlFor="cvc">CVC</Label>
-                            <Input id="cvc" placeholder="123" />
+                            <Input id="cvc" name="cvc" placeholder="123" value={paymentDetails.cvc} onChange={handleInputChange} required />
                         </div>
                     </div>
                 </div>
@@ -275,7 +289,7 @@ export default function CartPage() {
                   size="lg"
                   className="w-full bg-gradient-primary-accent text-primary-foreground"
                   onClick={handleCheckout}
-                  disabled={isCheckingOut}
+                  disabled={isCheckingOut || !isPaymentFormValid}
                 >
                   {isCheckingOut ? 'Processing...' : 'Complete Purchase'}
                 </Button>

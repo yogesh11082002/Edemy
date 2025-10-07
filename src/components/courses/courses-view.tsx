@@ -29,8 +29,10 @@ import { Skeleton } from '@/components/ui/skeleton';
 import { Sheet, SheetContent, SheetTrigger } from '../ui/sheet';
 import { Filter } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import { useIsMobile } from '@/hooks/use-mobile';
 
-function Filters({ isMobile = false }: { isMobile?: boolean }) {
+
+function CoursesPageContent() {
   const [selectedCategory, setSelectedCategory] = useState('all');
   const [selectedLevels, setSelectedLevels] = useState<string[]>([]);
   const [stagedPriceRange, setStagedPriceRange] = useState([200]);
@@ -43,6 +45,7 @@ function Filters({ isMobile = false }: { isMobile?: boolean }) {
   const { data: courses, isLoading: coursesLoading } = useCollection<Course>(coursesCollection);
   const searchParams = useSearchParams();
   const searchQuery = searchParams.get('query') || '';
+  const isMobile = useIsMobile();
 
   const handleLevelChange = (level: string) => {
     setSelectedLevels(prev => 
@@ -102,8 +105,8 @@ function Filters({ isMobile = false }: { isMobile?: boolean }) {
     });
   }, [searchQuery, selectedCategory, selectedLevels, appliedPriceRange, selectedRating, selectedLanguages, courses]);
   
-  const filterContent = (
-      <Card className={isMobile ? "border-0 shadow-none" : "sticky top-24"}>
+  const Filters = ({ inSheet = false }) => (
+      <Card className={cn(inSheet ? "border-0 shadow-none" : "sticky top-24")}>
           <CardHeader>
             <div className="flex justify-between items-center">
               <CardTitle className="font-headline text-2xl">Filters</CardTitle>
@@ -133,11 +136,11 @@ function Filters({ isMobile = false }: { isMobile?: boolean }) {
                 {levels.map((level) => (
                   <div key={level} className="flex items-center space-x-2">
                     <Checkbox 
-                      id={`${level.toLowerCase()}${isMobile ? '-mobile' : ''}`}
+                      id={`${level.toLowerCase()}${inSheet ? '-sheet' : ''}`}
                       checked={selectedLevels.includes(level)}
                       onCheckedChange={() => handleLevelChange(level)}
                     />
-                    <Label htmlFor={`${level.toLowerCase()}${isMobile ? '-mobile' : ''}`}>{level}</Label>
+                    <Label htmlFor={`${level.toLowerCase()}${inSheet ? '-sheet' : ''}`}>{level}</Label>
                   </div>
                 ))}
               </div>
@@ -159,11 +162,11 @@ function Filters({ isMobile = false }: { isMobile?: boolean }) {
                 {[4.5, 4.0, 3.5, 3.0].map((rating) => (
                   <div key={rating} className="flex items-center space-x-2">
                     <Checkbox 
-                      id={`rating-${rating}${isMobile ? '-mobile' : ''}`}
+                      id={`rating-${rating}${inSheet ? '-sheet' : ''}`}
                       checked={selectedRating === rating}
                       onCheckedChange={() => handleRatingChange(rating)}
                     />
-                    <Label htmlFor={`rating-${rating}${isMobile ? '-mobile' : ''}`}>{rating} & up</Label>
+                    <Label htmlFor={`rating-${rating}${inSheet ? '-sheet' : ''}`}>{rating} & up</Label>
                   </div>
                 ))}
               </div>
@@ -174,11 +177,11 @@ function Filters({ isMobile = false }: { isMobile?: boolean }) {
                 {languages.map((lang) => (
                   <div key={lang} className="flex items-center space-x-2">
                      <Checkbox 
-                      id={`${lang.toLowerCase()}${isMobile ? '-mobile' : ''}`}
+                      id={`${lang.toLowerCase()}${inSheet ? '-sheet' : ''}`}
                       checked={selectedLanguages.includes(lang)}
                       onCheckedChange={() => handleLanguageChange(lang)}
                     />
-                    <Label htmlFor={`${lang.toLowerCase()}${isMobile ? '-mobile' : ''}`}>{lang}</Label>
+                    <Label htmlFor={`${lang.toLowerCase()}${inSheet ? '-sheet' : ''}`}>{lang}</Label>
                   </div>
                 ))}
               </div>
@@ -188,11 +191,11 @@ function Filters({ isMobile = false }: { isMobile?: boolean }) {
   );
 
   return (
-    <>
-      <aside className={cn("md:col-span-1", { "hidden md:block": !isMobile, "md:hidden": isMobile })}>
-        {filterContent}
+    <div className="grid md:grid-cols-4 gap-8">
+      <aside className="hidden md:block md:col-span-1">
+        <Filters />
       </aside>
-      <main className="md:col-span-3">
+      <main className="col-span-4 md:col-span-3">
         {searchQuery && (
           <div className="mb-4">
             <h2 className="text-xl font-semibold">
@@ -202,13 +205,13 @@ function Filters({ isMobile = false }: { isMobile?: boolean }) {
         )}
          <div className="mb-4 flex justify-between items-center">
             <p className="text-muted-foreground text-sm">{filteredCourses.length} courses found.</p>
-            {isMobile && (
+             {isMobile && (
               <Sheet>
                 <SheetTrigger asChild>
                   <Button variant="outline" size="sm"><Filter className="mr-2 h-4 w-4" /> Filters</Button>
                 </SheetTrigger>
-                <SheetContent>
-                  <Filters isMobile />
+                <SheetContent className="overflow-y-auto">
+                  <Filters inSheet />
                 </SheetContent>
               </Sheet>
             )}
@@ -233,14 +236,43 @@ function Filters({ isMobile = false }: { isMobile?: boolean }) {
           )}
         </div>
       </main>
-    </>
+    </div>
   )
 }
 
 export function CoursesView() {
   return (
-    <div className="grid md:grid-cols-4 gap-8">
-      <Filters />
-    </div>
+    <Suspense fallback={<CoursesPageSkeleton />}>
+      <CoursesPageContent />
+    </Suspense>
   );
+}
+
+function CoursesPageSkeleton() {
+    return (
+        <div className="grid md:grid-cols-4 gap-8">
+            <aside className="md:col-span-1">
+                <Skeleton className="h-[700px] w-full" />
+            </aside>
+            <main className="md:col-span-3">
+                <div className="mb-4">
+                    <Skeleton className="h-6 w-1/4" />
+                </div>
+                <div className="mb-4">
+                    <Skeleton className="h-5 w-1/6" />
+                </div>
+                <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
+                    {Array.from({ length: 6 }).map((_, i) => (
+                        <div key={i} className="flex flex-col space-y-3">
+                            <Skeleton className="h-[192px] w-full rounded-xl" />
+                            <div className="space-y-2">
+                                <Skeleton className="h-4 w-3/4" />
+                                <Skeleton className="h-4 w-1/2" />
+                            </div>
+                        </div>
+                    ))}
+                </div>
+            </main>
+        </div>
+    )
 }

@@ -14,9 +14,7 @@ export default function CoursesPage() {
           Find the perfect course to boost your skills and career.
         </p>
       </header>
-      <Suspense fallback={<CoursesPageSkeleton />}>
-        <CoursesView />
-      </Suspense>
+      <CoursesView />
     </div>
   );
 }

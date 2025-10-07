@@ -8,24 +8,16 @@ import { doc } from 'firebase/firestore';
 import { Course } from '@/lib/types';
 import { Skeleton } from '@/components/ui/skeleton';
 import { DollarSign, Star, Users } from 'lucide-react';
-import { ResponsiveContainer, BarChart, XAxis, YAxis, CartesianGrid, Tooltip, Legend, Bar } from 'recharts';
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import { ResponsiveContainer, AreaChart, CartesianGrid, XAxis, Tooltip, Area, Legend } from 'recharts';
 
 const chartData = [
-  { month: 'Jan', enrollments: 65 },
-  { month: 'Feb', enrollments: 59 },
-  { month: 'Mar', enrollments: 80 },
-  { month: 'Apr', enrollments: 81 },
-  { month: 'May', enrollments: 56 },
-  { month: 'Jun', enrollments: 70 },
+  { month: 'Jan', revenue: 4000, enrollments: 24 },
+  { month: 'Feb', revenue: 3000, enrollments: 18 },
+  { month: 'Mar', revenue: 5000, enrollments: 45 },
+  { month: 'Apr', revenue: 4500, enrollments: 30 },
+  { month: 'May', revenue: 6000, enrollments: 55 },
+  { month: 'Jun', revenue: 7500, enrollments: 60 },
 ];
-
-const recentStudents = [
-    { id: '1', name: 'Alice Johnson', email: 'alice@example.com', joined: '2 days ago', avatar: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=50&q=80' },
-    { id: '2', name: 'Bob Williams', email: 'bob@example.com', joined: '3 days ago', avatar: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=50&q=80' },
-    { id: '3', name: 'Charlie Brown', email: 'charlie@example.com', joined: '1 week ago', avatar: 'https://images.unsplash.com/photo-1539571696357-5a69c17a67c6?w=50&q=80' },
-]
 
 export default function CourseAnalyticsPage() {
     const params = useParams<{ courseId: string }>();
@@ -92,7 +84,7 @@ export default function CourseAnalyticsPage() {
                         <Star className="h-4 w-4 text-muted-foreground" />
                     </CardHeader>
                     <CardContent>
-                        <div className="text-2xl font-bold">{course.rating.toFixed(1)} / 5.0</div>
+                        <div className="text-2xl font-bold">{(course.rating || 0).toFixed(1)} / 5.0</div>
                         <p className="text-xs text-muted-foreground">From {course.reviewCount} reviews</p>
                     </CardContent>
                 </Card>
@@ -100,58 +92,27 @@ export default function CourseAnalyticsPage() {
 
             <Card>
                 <CardHeader>
-                    <CardTitle>Enrollment Trend</CardTitle>
-                    <CardDescription>Student enrollments over the past 6 months.</CardDescription>
+                    <CardTitle>Performance Overview</CardTitle>
+                    <CardDescription>Revenue and enrollment trends over the past 6 months.</CardDescription>
                 </CardHeader>
                 <CardContent className="h-[350px]">
                      <ResponsiveContainer width="100%" height="100%">
-                        <BarChart data={chartData}>
+                        <AreaChart data={chartData}>
                             <CartesianGrid strokeDasharray="3 3" />
                             <XAxis dataKey="month" fontSize={12} tickLine={false} axisLine={false} />
-                            <YAxis fontSize={12} tickLine={false} axisLine={false} />
-                            <Tooltip />
+                            <Tooltip
+                                contentStyle={{
+                                    backgroundColor: 'hsl(var(--background))',
+                                    borderColor: 'hsl(var(--border))'
+                                }}
+                            />
                             <Legend />
-                            <Bar dataKey="enrollments" fill="hsl(var(--primary))" radius={[4, 4, 0, 0]} />
-                        </BarChart>
+                            <Area type="monotone" dataKey="revenue" stackId="1" stroke="hsl(var(--primary))" fill="hsl(var(--primary) / 0.2)" name="Revenue ($)" />
+                            <Area type="monotone" dataKey="enrollments" stackId="2" stroke="hsl(var(--accent))" fill="hsl(var(--accent) / 0.2)" name="Enrollments" />
+                        </AreaChart>
                     </ResponsiveContainer>
                 </CardContent>
             </Card>
-
-            <Card>
-                <CardHeader>
-                    <CardTitle>Recent Students</CardTitle>
-                    <CardDescription>A list of the most recent student enrollments.</CardDescription>
-                </CardHeader>
-                <CardContent>
-                     <Table>
-                        <TableHeader>
-                            <TableRow>
-                                <TableHead>Student</TableHead>
-                                <TableHead className="hidden sm:table-cell">Email</TableHead>
-                                <TableHead className="text-right">Joined</TableHead>
-                            </TableRow>
-                        </TableHeader>
-                        <TableBody>
-                            {recentStudents.map(student => (
-                                <TableRow key={student.id}>
-                                    <TableCell>
-                                        <div className="flex items-center gap-3">
-                                            <Avatar className="h-9 w-9">
-                                                <AvatarImage src={student.avatar} alt={student.name} />
-                                                <AvatarFallback>{student.name[0]}</AvatarFallback>
-                                            </Avatar>
-                                            <span className="font-medium">{student.name}</span>
-                                        </div>
-                                    </TableCell>
-                                    <TableCell className="hidden sm:table-cell">{student.email}</TableCell>
-                                    <TableCell className="text-right">{student.joined}</TableCell>
-                                </TableRow>
-                            ))}
-                        </TableBody>
-                    </Table>
-                </CardContent>
-            </Card>
-
         </div>
     );
 }

@@ -10,14 +10,30 @@ import { Skeleton } from '@/components/ui/skeleton';
 import { DollarSign, Star, Users } from 'lucide-react';
 import { ResponsiveContainer, AreaChart, CartesianGrid, XAxis, Tooltip, Area, Legend } from 'recharts';
 
-const chartData = [
-  { month: 'Jan', revenue: 4000, enrollments: 24 },
-  { month: 'Feb', revenue: 3000, enrollments: 18 },
-  { month: 'Mar', revenue: 5000, enrollments: 45 },
-  { month: 'Apr', revenue: 4500, enrollments: 30 },
-  { month: 'May', revenue: 6000, enrollments: 55 },
-  { month: 'Jun', revenue: 7500, enrollments: 60 },
-];
+const generateChartData = (currentEnrollments: number) => {
+    const data = [];
+    const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'];
+    let cumulativeEnrollments = 0;
+
+    for (let i = 0; i < months.length -1; i++) {
+        const randomEnrollments = Math.floor(Math.random() * (currentEnrollments * 0.2));
+        cumulativeEnrollments += randomEnrollments;
+        data.push({
+            month: months[i],
+            revenue: Math.floor(Math.random() * 5000), // revenue is still random for this demo
+            enrollments: randomEnrollments
+        });
+    }
+
+    // Last month shows the final push to the current number
+    data.push({
+        month: months[months.length - 1],
+        revenue: Math.floor(Math.random() * 5000),
+        enrollments: Math.max(0, currentEnrollments - cumulativeEnrollments)
+    });
+
+    return data;
+}
 
 export default function CourseAnalyticsPage() {
     const params = useParams<{ courseId: string }>();
@@ -31,6 +47,8 @@ export default function CourseAnalyticsPage() {
     const { data: course, isLoading } = useDoc<Course>(courseRef);
 
     const estimatedRevenue = (course?.price || 0) * (course?.enrolledStudents || 0);
+    const chartData = course ? generateChartData(course.enrolledStudents || 0) : [];
+
 
     if (isLoading) {
         return (
@@ -93,7 +111,7 @@ export default function CourseAnalyticsPage() {
             <Card>
                 <CardHeader>
                     <CardTitle>Performance Overview</CardTitle>
-                    <CardDescription>Revenue and enrollment trends over the past 6 months.</CardDescription>
+                    <CardDescription>Monthly enrollment trend. (Revenue data is for demonstration)</CardDescription>
                 </CardHeader>
                 <CardContent className="h-[350px]">
                      <ResponsiveContainer width="100%" height="100%">

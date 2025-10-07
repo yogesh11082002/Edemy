@@ -1,3 +1,4 @@
+
 'use client';
 
 import { EnrolledCourseCard } from '@/components/dashboard/student/enrolled-course-card';
@@ -7,6 +8,7 @@ import { collection, query, doc, getDoc, updateDoc, writeBatch } from 'firebase/
 import { useEffect, useState } from 'react';
 import { Course, EnrolledCourse } from '@/lib/types';
 import { Skeleton } from '@/components/ui/skeleton';
+import { Award } from 'lucide-react';
 
 type EnrolledCourseWithDetails = EnrolledCourse & {
   details?: Course;
@@ -88,6 +90,8 @@ export default function StudentDashboardPage() {
     }
 };
 
+  const completedCourses = enrolledCourses.filter(c => c.progress === 100);
+
   return (
     <div className="space-y-8">
       <Card>
@@ -130,7 +134,19 @@ export default function StudentDashboardPage() {
           </CardTitle>
         </CardHeader>
         <CardContent>
-          <p className="text-muted-foreground">You have not earned any certificates yet.</p>
+          {completedCourses.length > 0 ? (
+            <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+              {completedCourses.map(course => (
+                  <div key={course.courseId} className="flex flex-col items-center justify-center p-6 text-center bg-secondary rounded-lg border-2 border-dashed">
+                      <Award className="h-12 w-12 text-amber-500 mb-4" />
+                      <h3 className="font-semibold">{course.details?.title}</h3>
+                      <p className="text-sm text-muted-foreground mt-2">Congratulations on completing the course! Your certificate will be issued soon.</p>
+                  </div>
+              ))}
+            </div>
+          ) : (
+            <p className="text-muted-foreground">You have not earned any certificates yet.</p>
+          )}
         </CardContent>
       </Card>
     </div>

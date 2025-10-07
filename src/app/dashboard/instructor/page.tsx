@@ -9,16 +9,19 @@ import Image from 'next/image';
 import { Badge } from '@/components/ui/badge';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
 import { useCollection, useFirestore, useUser, useMemoFirebase } from '@/firebase';
-import { collection, query, where } from 'firebase/firestore';
+import { collection, query, where, doc, deleteDoc } from 'firebase/firestore';
 import { Course } from '@/lib/types';
-import { useMemo, useEffect } from 'react';
+import { useMemo, useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
-
+import { DeleteCourseDialog } from '@/components/dashboard/instructor/delete-course-dialog';
+import { useToast } from '@/hooks/use-toast';
 
 export default function InstructorDashboardPage() {
     const { user, isUserLoading } = useUser();
     const router = useRouter();
     const firestore = useFirestore();
+    const { toast } = useToast();
+    const [courseToDelete, setCourseToDelete] = useState<Course | null>(null);
 
     useEffect(() => {
         if (!isUserLoading && !user) {
@@ -31,7 +34,7 @@ export default function InstructorDashboardPage() {
         return query(collection(firestore, 'courses'), where('instructorId', '==', user.uid));
     }, [firestore, user]);
     
-    const { data: instructorCourses, isLoading: coursesLoading } = useCollection<Course>(coursesQuery);
+    const { data: instructorCourses, isLoading: coursesLoading, setData: setInstructorCourses } = useCollection<Course>(coursesQuery);
 
     const stats = useMemo(() => {
         if (!instructorCourses) {
@@ -57,6 +60,32 @@ export default function InstructorDashboardPage() {
         }
 
     }, [instructorCourses]);
+
+    const handleDeleteCourse = async () => {
+        if (!courseToDelete || !firestore) return;
+        
+        try {
+            const courseRef = doc(firestore, 'courses', courseToDelete.id);
+            await deleteDoc(courseRef);
+            
+            // Optimistically update the UI
+            setInstructorCourses(prevCourses => prevCourses?.filter(c => c.id !== courseToDelete.id) || null);
+
+            toast({
+                title: 'Course Deleted',
+                description: `"${courseToDelete.title}" has been successfully deleted.`,
+            });
+        } catch (error) {
+            toast({
+                variant: 'destructive',
+                title: 'Error',
+                description: 'Failed to delete course. Please try again.',
+            });
+        } finally {
+            setCourseToDelete(null);
+        }
+    };
+
 
     if (isUserLoading || !user) {
         return <div className="text-center py-12">Loading instructor dashboard...</div>;
@@ -175,9 +204,13 @@ export default function InstructorDashboardPage() {
                       </DropdownMenuTrigger>
                       <DropdownMenuContent align="end">
                         <DropdownMenuLabel>Actions</DropdownMenuLabel>
-                        <DropdownMenuItem>Edit</DropdownMenuItem>
-                        <DropdownMenuItem>View Analytics</DropdownMenuItem>
-                         <DropdownMenuItem className="text-destructive">Delete</DropdownMenuItem>
+                        <DropdownMenuItem asChild>
+                           <Link href={`/dashboard/instructor/edit/${course.id}`}>Edit</Link>
+                        </DropdownMenuItem>
+                        <DropdownMenuItem asChild>
+                           <Link href={`/dashboard/instructor/analytics/${course.id}`}>View Analytics</Link>
+                        </DropdownMenuItem>
+                         <DropdownMenuItem onClick={() => setCourseToDelete(course)} className="text-destructive">Delete</DropdownMenuItem>
                       </DropdownMenuContent>
                     </DropdownMenu>
                   </TableCell>
@@ -187,6 +220,11 @@ export default function InstructorDashboardPage() {
           </Table>
         </CardContent>
       </Card>
+      <DeleteCourseDialog 
+        course={courseToDelete}
+        onConfirm={handleDeleteCourse}
+        onCancel={() => setCourseToDelete(null)}
+      />
     </div>
   );
 }

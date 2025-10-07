@@ -36,10 +36,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 
 const lessonSchema = z.object({
   title: z.string().min(3, "Lesson title must be at least 3 characters."),
-  videoUrl: z.string().url("Please enter a valid YouTube URL.").refine(
-    (url) => url.includes("youtube.com/watch") || url.includes("youtu.be"),
-    "Please provide a valid YouTube watch URL."
-  ),
+  videoUrl: z.string().url("Please enter a valid video URL."),
 });
 
 const sectionSchema = z.object({
@@ -414,7 +411,7 @@ function LessonBuilder({ sectionIndex }: { sectionIndex: number }) {
               render={({ field }) => (
                 <FormItem>
                   <FormControl>
-                    <Input placeholder="YouTube URL (e.g., https://www.youtube.com/watch?v=...)" {...field} />
+                    <Input placeholder="Video URL (e.g., YouTube, Vimeo)" {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>

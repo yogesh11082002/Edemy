@@ -26,7 +26,7 @@ import { useCollection, useFirestore, useMemoFirebase } from '@/firebase';
 import { collection } from 'firebase/firestore';
 import { Course } from '@/lib/types';
 import { Skeleton } from '@/components/ui/skeleton';
-import { Sheet, SheetContent, SheetTrigger } from '../ui/sheet';
+import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle, SheetTrigger } from '../ui/sheet';
 import { Filter } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { useIsMobile } from '@/hooks/use-mobile';
@@ -211,6 +211,12 @@ function CoursesPageContent() {
                   <Button variant="outline" size="sm"><Filter className="mr-2 h-4 w-4" /> Filters</Button>
                 </SheetTrigger>
                 <SheetContent className="overflow-y-auto">
+                    <SheetHeader>
+                        <SheetTitle>Course Filters</SheetTitle>
+                        <SheetDescription>
+                            Refine your search to find the perfect course.
+                        </SheetDescription>
+                    </SheetHeader>
                   <Filters inSheet />
                 </SheetContent>
               </Sheet>

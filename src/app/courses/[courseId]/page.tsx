@@ -1,5 +1,4 @@
 
-
 'use client';
 
 import { reviews } from '@/lib/placeholder-data';
@@ -58,9 +57,9 @@ export default function CourseDetailPage() {
   useEffect(() => {
     // Set the initial video to the first lesson of the first section if available
     if (course?.curriculum?.[0]?.lessons?.[0]?.videoUrl) {
-      const firstVideoId = extractVideoId(course.curriculum[0].lessons[0].videoUrl);
-      if (firstVideoId) {
-        setActiveVideoUrl(`https://www.youtube.com/embed/${firstVideoId}`);
+      const firstVideoUrl = getEmbedUrl(course.curriculum[0].lessons[0].videoUrl);
+      if (firstVideoUrl) {
+        setActiveVideoUrl(firstVideoUrl);
       }
     }
   }, [course]);
@@ -80,31 +79,32 @@ export default function CourseDetailPage() {
     handleAddToCart();
   };
 
-  const extractVideoId = (url: string) => {
+  const getEmbedUrl = (url: string): string | null => {
     if (!url) return null;
-    let videoId = null;
     try {
       const urlObj = new URL(url);
-      if (urlObj.hostname === 'youtu.be') {
-        videoId = urlObj.pathname.slice(1);
-      } else if (urlObj.hostname.includes('youtube.com')) {
-        videoId = urlObj.searchParams.get('v');
+      if (urlObj.hostname.includes('youtube.com') || urlObj.hostname === 'youtu.be') {
+        const videoId = urlObj.hostname === 'youtu.be'
+          ? urlObj.pathname.slice(1).split('?')[0]
+          : urlObj.searchParams.get('v');
+        return videoId ? `https://www.youtube.com/embed/${videoId}` : null;
       }
-      // Strip any extra params from youtu.be links
-      if (videoId) {
-        return videoId.split('?')[0];
+      if (urlObj.hostname.includes('vimeo.com')) {
+        const videoId = urlObj.pathname.slice(1).split('/')[0];
+        return videoId ? `https://player.vimeo.com/video/${videoId}` : null;
       }
     } catch (e) {
       console.error('Invalid video URL', e);
       return null;
     }
-    return videoId;
+    // Fallback for other direct video links
+    return url;
   };
 
   const handlePlayClick = async (lesson: Lesson) => {
-    const videoId = extractVideoId(lesson.videoUrl);
-    if (videoId) {
-      setActiveVideoUrl(`https://www.youtube.com/embed/${videoId}`);
+    const embedUrl = getEmbedUrl(lesson.videoUrl);
+    if (embedUrl) {
+      setActiveVideoUrl(embedUrl);
       setShowVideo(true);
 
       // Track progress if enrolled and the lesson hasn't been watched yet
@@ -122,7 +122,7 @@ export default function CourseDetailPage() {
       toast({
         variant: 'destructive',
         title: 'Invalid Video URL',
-        description: 'The provided URL is not a valid YouTube video.',
+        description: 'The provided URL is not a valid video link.',
       });
     }
   };
@@ -465,8 +465,8 @@ export default function CourseDetailPage() {
                 width="100%"
                 height="100%"
                 src={activeVideoUrl}
-                title="YouTube video player"
-                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                title="Video player"
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
                 allowFullScreen
               ></iframe>
             </div>

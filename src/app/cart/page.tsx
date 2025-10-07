@@ -250,18 +250,18 @@ export default function CartPage() {
                      <div className="space-y-2">
                         <Label htmlFor="card-number">Card Number</Label>
                         <div className="relative">
-                            <Input id="card-number" placeholder="**** **** **** 1234" disabled />
+                            <Input id="card-number" placeholder="**** **** **** 1234" />
                             <CreditCard className="absolute right-3 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />
                         </div>
                     </div>
                     <div className="grid grid-cols-2 gap-4">
                         <div className="space-y-2">
                             <Label htmlFor="expiry">Expiry</Label>
-                            <Input id="expiry" placeholder="MM/YY" disabled />
+                            <Input id="expiry" placeholder="MM/YY" />
                         </div>
                         <div className="space-y-2">
                             <Label htmlFor="cvc">CVC</Label>
-                            <Input id="cvc" placeholder="123" disabled />
+                            <Input id="cvc" placeholder="123" />
                         </div>
                     </div>
                 </div>
